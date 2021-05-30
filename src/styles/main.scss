@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+@import './globals';
+
+:root {
+    --color-primary-1: #{$light-primary};
+    --color-primary-2: #{$dark-primary};
+    --color-secondary-1: #{$light-secondary};
+    --color-secondary-2: #{$dark-secondary};
+    --color-highlight: #{$highlight};
+}
+
+* {
+    box-sizing: border-box;
+    font-family: "Raleway";
+    color: var(--color-primary-2)
+}
+
+body {
+    margin: 0;
+}
