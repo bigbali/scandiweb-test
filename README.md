@@ -11,7 +11,7 @@
 	but I found the solution was rather simple in the end
 	(doesn't mean it was simple figuring it out).
 	
-##Why I believe this is the API schema is poorly designed:
+##Why I believe this API schema is poorly designed:
 	- result.data.category.products, just to get to actual useful data
 	- needs processing on front end, should return data already made usable
 		(or at least, that is how I would do it)
@@ -19,3 +19,9 @@
 		- query all categories (which returns just metadata)
 		- query a specific category, which returns all related to it (name of it, related products...)
 		- query a specific product with all its glorious details
+		
+# CATEGORY PAGE: select all items by category
+	- could be simply products page...
+	
+## You know how we juniors are... we don't know what we are doing, so we just hack things together till we have something working...
+## This font is fuckin' great!

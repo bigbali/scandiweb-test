@@ -1,0 +1,50 @@
+.spinner-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgb(187, 187, 187);
+    opacity: 0;
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.1s;
+
+    &.spinner-active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    &>.spinner {
+        height: 3rem;
+        width: 3rem;
+        animation-name: spin;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+        // This makes it look continuous
+        // (it's actually just an illusion, because at 360deg we go back to 0deg,
+        // but that's something your eyes won't see :)
+        animation-timing-function: linear;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(120deg);
+    }
+
+    50% {
+        transform: rotate(240deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

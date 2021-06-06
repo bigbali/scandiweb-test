@@ -12,7 +12,7 @@ class CategorySelector extends Component {
         let categories = this.props.categories.map((category, index) => {
             return (
                 <li key={index}>
-                    <NavLink key={index} activeClassName="current-category" to={`/category/${category}`}>{category}</NavLink>
+                    <NavLink key={index} activeClassName="current-category" exact to={`/category/${category}`}>{category}</NavLink>
                 </li>
             )
         })

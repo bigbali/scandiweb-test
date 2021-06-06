@@ -1,0 +1,25 @@
+.error-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    // Put all this behind everything else
+    // (in theory, when this page is visible, only the header will cover this page anyway,
+    // so nothing should get in the way)
+    z-index: -1;
+
+    >div {
+
+        h1,
+        h2,
+        h3 {
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+    }
+}
