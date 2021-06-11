@@ -14,6 +14,7 @@ import { getGarbage, determineAllAvailableCategories } from './queries/parseGarb
 import log from './util/log';
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner.component';
 import ErrorPage from './routes/ErrorPage/ErrorPage.component';
+import { STATUS_404, STATUS_406 } from './globals/statuscodes';
 
 class App extends PureComponent {
     constructor(props) {
@@ -23,34 +24,47 @@ class App extends PureComponent {
             categories: [],
             products: [],
             isLoading: true,
-            hasFetchedData: false
+            hasDataButIsUnusable: false
         }
 
         this.fetchAllData = this.fetchAllData.bind(this);
         this.getActualApp = this.getActualApp.bind(this);
+        this.determineCorrectProcedure = this.determineCorrectProcedure.bind(this);
     }
 
     async fetchAllData() {
-        getGarbage().then(result => {
-            const categories = determineAllAvailableCategories(result);
+        getGarbage().then(data => {
+            let products = [];
+            let categories = [];
 
-            // hasFetchedData: it's possible that the query did succeed, but did not return any data
-            // If there are no categories, most likely no products, either
+            // If data has no products, we have incorrect data.
+            // If data has products, but has no categories, that's still incorrect.
+            // * I could have made my life easier by checking data in the fetch function.
+            // * Oh well, now it matters little enough not to bother with it.
+            try {
+                products = data.products;
+                categories = determineAllAvailableCategories(products);
+            }
+            catch (error) {
+                this.setState({
+                    ...this.state,
+                    hasDataButIsUnusable: true
+                })
+                // This is for the outer catch block to handle
+                throw Error("API response could not be processed.");
+            }
+
             this.setState({
                 categories: categories,
-                products: result,
+                products: products,
                 isLoading: false,
-                hasFetchedData: categories ? true : false
-                // We can use result directly, as it is already the pure product array
-                // from which we isolated the categories
+                hasDataButIsUnusable: false
             });
+
         }).catch(error => {
-            // If determineAllAvailableCategories fails, isLoading will stay true
-            // because state won't be set,
-            // so we do it here, so we can display error to user
             this.setState({
                 ...this.state,
-                isLoading: false
+                isLoading: false,
             })
             // If something goes wrong, this shall say so in the console
             log(`Failed to set application state from API response:\n ${error}`, "error");
@@ -62,7 +76,6 @@ class App extends PureComponent {
         return (
             <>
                 <LoadingSpinner active={this.state.isLoading} />
-
                 <Router>
                     <Header categories={this.state.categories} />
                     <Switch>
@@ -81,7 +94,7 @@ class App extends PureComponent {
                             <CartPage />
                         </Route>
                         <Route>
-                            <ErrorPage message="This page does not exist." statusCode="404 Not Found">
+                            <ErrorPage message="This page does not exist." statusCode={STATUS_404}>
                                 Explanation: we could not find this page, for whatever reason.
                                 We are deeply sorry!
                             </ErrorPage>
@@ -91,32 +104,40 @@ class App extends PureComponent {
             </>
         )
     }
-    componentDidMount() {
-        this.fetchAllData();
-    }
 
-
-    render() {
+    determineCorrectProcedure() {
         let application;
 
-        // If finished loading, but no data has been fetched,
-        // return error message
-        // (it's also logged in console)
-        if (!this.state.isLoading && !this.state.hasFetchedData) {
+        // If we have finished loading, but got no data at all, this will catch that
+        if (!this.state.isLoading && !this.state.hasDataButIsUnusable && this.state.categories.length === 0) {
             application =
-                <ErrorPage message="Could not fetch necessary data." statusCode="406 Not Acceptable">
-                    This means we could not find the data necessary to operate this page.
+                <ErrorPage message="Could not fetch necessary data." statusCode={STATUS_404}>
+                    We couldn't get data necessary to operate this page.
+                </ErrorPage>
+        }
+        // Similarly, if we have finished loading, but think our data is incorrect, this handles it
+        else if (!this.state.isLoading && this.state.hasDataButIsUnusable) {
+            application =
+                <ErrorPage message="Could not fetch usable data." statusCode={STATUS_406}>
+                    There's something wrong with our data. Oops!
                 </ErrorPage>
             // I did look it up on Wikipedia. It's real!
-            // (and in theory, it only shows when data is unusable, and not when request fails entirely)
         }
         else {
             application = this.getActualApp();
         }
 
+        return application;
+    }
+
+    componentDidMount() {
+        this.fetchAllData();
+    }
+
+    render() {
         return (
             <>
-                {application}
+                {this.determineCorrectProcedure()}
             </>
         )
     }

@@ -1,0 +1,15 @@
+.currency-selector-wrapper {
+    >* {
+        display: inline-block;
+    }
+
+    .currency-sign {
+        font-weight: 500;
+    }
+
+    .currency-dropdown-toggle {
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+}

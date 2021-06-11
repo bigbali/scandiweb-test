@@ -13,13 +13,14 @@
     // so nothing should get in the way)
     z-index: -1;
 
-    >div {
+    h1,
+    h2,
+    h3 {
+        margin-top: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
 
-        h1,
-        h2,
-        h3 {
-            margin-top: 0.25rem;
-            margin-bottom: 0.25rem;
-        }
+    p {
+        font-size: 1.25rem;
     }
 }

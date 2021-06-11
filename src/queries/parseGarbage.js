@@ -7,17 +7,12 @@ export async function getGarbage(){
         cache: new InMemoryCache()
     });
     
-    // Return this so we don't get undefined in App.jsx
-    // I'd like to believe I know why, but even though I tried to understand,
-    // the bulb in my mind decided to dim;
-    // probably because I deprived myself from not at all deserved sleep
-    // so let's call it magic!
     return client.query({
         // Query string resides in queries.js, because it bothers my eyes with its presence
         query: gql (getAll)
     })
     .then(result => {
-        return result.data.category.products;
+        return result.data.category;
     })
 }
 

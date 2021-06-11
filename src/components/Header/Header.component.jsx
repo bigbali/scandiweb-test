@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import CategorySelector from './CategorySelector/CategorySelector.component';
-//import { NavLink } from 'react-router-dom';
+import CategorySelector from '../CategorySelector';
+import HeaderActions from '../HeaderActions';
+import Logo from '../Logo/Logo.component';
 
 import './Header.style.scss';
 
@@ -10,6 +11,8 @@ export default class Header extends Component {
         return (
             <header>
                 <CategorySelector categories={this.props.categories} />
+                <Logo />
+                <HeaderActions />
             </header>
         )
     }

@@ -8,6 +8,7 @@ import './CategoryPage.style.scss';
 
 class CategoryPage extends PureComponent {
     render() {
+        // If url parameter doesn't match any categories, return an error page
         const { category } = this.props.match.params;
         if (!this.props.categories.includes(category)) {
             return <ErrorPage message="Category not found." statusCode={STATUS_404}>We couldn't find the requested category.</ErrorPage>
