@@ -34,6 +34,7 @@ export const extractCategories = (products) => {
 }
 
 // Iterate through all the products and all their prices
+// to determine all available currencies
 export const extractCurrencies = (products) => {
     let currencies = [];
 
@@ -58,8 +59,32 @@ export const extractAttributes = (products) => {
 }
 
 // Prepend currency with symbol
-export const pairCurrencyWithSymbol = (currency) => {
-    let symbol;
+export const pairWithSymbol = (currency) => {
+    return `${_GETSYMBOL_(currency)} ${currency}`;
+}
+
+export const getSymbol = (currency) => {
+    return _GETSYMBOL_(currency);
+}
+
+// It's possible to have a currency which does not have a symbol.
+// In this case, we return the currency.
+// This is useful in CurrencySelector, when we select a currency without symbol.
+// (Now you can tell me how unnecessary it is, as no one will ever add such a currency,
+// and you're probably right, but surprises are quite common in the world of software,
+// and also, I had fun doing this)
+export const getSafeSymbol = (currency) => {
+    let symbol = getSymbol(currency);
+
+    if (!symbol) {
+        symbol = currency;
+    }
+
+    return symbol;
+}
+
+const _GETSYMBOL_ = (currency) => {
+    let symbol
 
     switch (currency.toUpperCase()){
         // From Wikipedia
@@ -118,5 +143,5 @@ export const pairCurrencyWithSymbol = (currency) => {
             symbol = "";
     }
 
-    return `${symbol} ${currency}`;
+    return symbol;
 }
