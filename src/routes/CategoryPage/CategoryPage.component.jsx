@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { useParams, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { STATUS_404 } from './../../globals/statuscodes';
 
 

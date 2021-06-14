@@ -1,0 +1,23 @@
+// Was searching why this wouldn't work
+// reason: .cart-wrappper (can you see it?:)
+.cart-wrapper {
+    display: flex;
+    align-items: center;
+    //background-color: red;
+    margin-left: 1rem;
+}
+
+.cart-counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background-color: black;
+    color: var(--color-primary-1);
+    font-size: 14px;
+    font-weight: 700;
+    font-family: "Roboto";
+    transform: translate(-40%, -50%);
+}

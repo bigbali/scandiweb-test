@@ -9,20 +9,22 @@ import Header from './components/Header';
 
 import './styles/main.scss';
 
-import { getGarbage, determineAllAvailableCategories } from './queries/parseGarbage';
+import { fetchData, extractCategories, extractCurrencies } from './util/dataProcessor';
 
 import log from './util/log';
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner.component';
 import ErrorPage from './routes/ErrorPage/ErrorPage.component';
 import { STATUS_404, STATUS_406 } from './globals/statuscodes';
+import devlog from './util/devlog';
 
 class App extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            categories: [],
             products: [],
+            categories: [],
+            currencies: [],
             isLoading: true,
             hasDataButIsUnusable: false
         }
@@ -33,9 +35,10 @@ class App extends PureComponent {
     }
 
     async fetchAllData() {
-        getGarbage().then(data => {
+        fetchData().then(data => {
             let products = [];
             let categories = [];
+            let currencies = [];
 
             // If data has no products, we have incorrect data.
             // If data has products, but has no categories, that's still incorrect.
@@ -43,7 +46,11 @@ class App extends PureComponent {
             // * Oh well, now it matters little enough not to bother with it.
             try {
                 products = data.products;
-                categories = determineAllAvailableCategories(products);
+                categories = extractCategories(products);
+                currencies = extractCurrencies(products);
+                // I see now there are only 5 different currencies, and "extractCurrencies()" could be considered a hit on performance.
+                // None the less, I'm keeping it, because here, the performance implications pretty much don't matter,
+                // and I can never know when someone decides to add a new currency to specific item, while the rest stay the same
             }
             catch (error) {
                 this.setState({
@@ -55,10 +62,11 @@ class App extends PureComponent {
             }
 
             this.setState({
-                categories: categories,
+                ...this.state,
                 products: products,
+                categories: categories,
+                currencies: currencies,
                 isLoading: false,
-                hasDataButIsUnusable: false
             });
 
         }).catch(error => {
@@ -67,42 +75,51 @@ class App extends PureComponent {
                 isLoading: false,
             })
             // If something goes wrong, this shall say so in the console
-            log(`Failed to set application state from API response:\n ${error}`, "error");
+            devlog(`Failed to set application state from API response:\n ${error}`, "error");
         })
     }
 
     getActualApp() {
         // I realize the page will be rendered twice, once initially, then once when data is fetched
-        return (
-            <>
-                <LoadingSpinner active={this.state.isLoading} />
-                <Router>
-                    <Header categories={this.state.categories} />
-                    <Switch>
-                        {/* Redirect index to first available category */}
-                        <Route exact path="/">
-                            {/* If categories have not yet been assigned, redirect nowhere */}
-                            <Redirect exact from="/" to={this.state.categories.length > 0 ? `category/${this.state.categories[0]}` : ""} />
-                        </Route>
-                        <Route exact path="/category/:category">
-                            <CategoryPage categories={this.state.categories} productListings={this.state.products} />
-                        </Route>
-                        <Route exact path="/product/:product">
-                            <ProductPage productListings={this.state.products} />
-                        </Route>
-                        <Route exact path="/cart">
-                            <CartPage />
-                        </Route>
-                        <Route>
-                            <ErrorPage message="This page does not exist." statusCode={STATUS_404}>
-                                Explanation: we could not find this page, for whatever reason.
-                                We are deeply sorry!
-                            </ErrorPage>
-                        </Route>
-                    </Switch>
-                </Router>
-            </>
-        )
+        /* I had a nasty bug I can't even explain properly.
+            In theory, I passed currencies through props to CurrencySelector, yet only when
+            my code was transpiled, they were properly usable. React Dev Tools showed the props in place,
+            but the component seem to have no idea about them.
+            My understanding was, when here the state updated, they would get re-rendered with proper props,
+            but instead what I got was a day of trying to figure out what the F# is going on.
+            Anyway, this in theory does solve it. */
+        if (this.state.currencies.length > 0 && this.state.categories.length > 0) {
+            return (
+                <>
+                    <LoadingSpinner active={this.state.isLoading} />
+                    <Router>
+                        <Header categories={this.state.categories} currencies={this.state.currencies} />
+                        <Switch>
+                            {/* Redirect index to first available category */}
+                            <Route exact path="/">
+                                {/* If categories have not yet been assigned, redirect nowhere */}
+                                <Redirect exact from="/" to={this.state.categories.length > 0 ? `category/${this.state.categories[0]}` : ""} />
+                            </Route>
+                            <Route exact path="/category/:category">
+                                <CategoryPage categories={this.state.categories} productListings={this.state.products} />
+                            </Route>
+                            <Route exact path="/product/:product">
+                                <ProductPage productListings={this.state.products} />
+                            </Route>
+                            <Route exact path="/cart">
+                                <CartPage />
+                            </Route>
+                            <Route>
+                                <ErrorPage message="This page does not exist." statusCode={STATUS_404}>
+                                    Explanation: we could not find this page, for whatever reason.
+                                    We are deeply sorry!
+                                </ErrorPage>
+                            </Route>
+                        </Switch>
+                    </Router>
+                </>
+            )
+        }
     }
 
     determineCorrectProcedure() {
