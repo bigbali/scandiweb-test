@@ -1,0 +1,20 @@
+.product-card {
+    padding: 1rem;
+    height: auto;
+    background-color: yellow;
+    object-fit: cover;
+
+    .product-card-image {
+        /* Not supported well enough */
+        //aspect-ratio: 354/330;
+        /* Alternative to aspect-ratio (354/330 => 1.07 => 107%) */
+        padding-bottom: 107%;
+        background-size: auto 100%;
+    }
+
+    .product-card-title {
+        font-weight: 300;
+        font-size: 1.125rem;
+        margin: 1.5rem 0 0 0;
+    }
+}

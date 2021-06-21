@@ -1,7 +1,16 @@
 import ApolloClient, { InMemoryCache, gql } from 'apollo-boost';
 import { getAll } from '../queries/queries';
+import devlog from './devlog';
+import store from '../redux/store';
+import { setStatus } from './../redux/actions/actions';
+import * as actions from './../redux/actions/types';
+
+const setErrorStatus = (status) => {
+    store.dispatch(setStatus(status));
+}
 
 export async function fetchData(){
+
     const client = new ApolloClient({
         uri: 'http://localhost:4000',
         cache: new InMemoryCache()
@@ -12,9 +21,21 @@ export async function fetchData(){
         query: gql (getAll)
     })
     .then(result => {
-        return result.data.category;
+        const data = result.data.category;
+        if (data) {
+            return data;
+        }
+        else {
+            setErrorStatus(actions.STATUS_DATA_EMPTY);
+            devlog("API responded with empty data.", "error");
+        }
+    })
+    .catch(error => {
+        setErrorStatus(actions.STATUS_API_OFFLINE);
+        devlog("API did not respond.", "error");
     })
 }
+
 
 
 export const extractCategories = (products) => {
@@ -22,13 +43,21 @@ export const extractCategories = (products) => {
 
     // Loop through all the products and push their category to categories, if not yet included
     // this way we can make sure there is one entry for each category
-    products.forEach(product => {
-        let category = product.category;
-
-        if (!categories.includes(category)){
-            categories.push(category);
-        }
-    });
+    try {
+        products.forEach(product => {
+            let category = product.category;
+    
+            if (!categories.includes(category)){
+                categories.push(category);
+            }
+        });
+    }
+    catch(error) {
+        // In theory, if 'products' is undefined, we get an error, which means we have no categories
+        // ... and then, how are we going to select categories? :|
+        setErrorStatus(actions.STATUS_DATA_CORRUPTED);
+        devlog("Couldn't extract [categories]. Data is probably corrupted.", "error");
+    }
   
     return categories;
 }
@@ -38,18 +67,26 @@ export const extractCategories = (products) => {
 export const extractCurrencies = (products) => {
     let currencies = [];
 
-    // Cute little nested array :)
-    products.forEach(product => {  
-        let prices = product.prices;
-
-        prices.forEach(price => {
-            let currency = price.currency;
-
-            if (!currencies.includes(currency)){
-                currencies.push(currency);
-            }
-        })
-    });
+    try {
+        // Cute little nested array :)
+        products.forEach(product => {  
+            let prices = product.prices;
+    
+            prices.forEach(price => {
+                let currency = price.currency;
+    
+                if (!currencies.includes(currency)){
+                    currencies.push(currency);
+                }
+            })
+        });
+    }
+    catch(error) {
+        // Same as above...
+        // If no products, then no currencies, then no 'currency selector'... then life is sad :(
+        setErrorStatus(actions.STATUS_DATA_CORRUPTED);
+        devlog("Couldn't extract [currencies]. Data is probably corrupted.", "error");
+    }
 
     return currencies;
 }
@@ -67,12 +104,9 @@ export const getSymbol = (currency) => {
     return _GETSYMBOL_(currency);
 }
 
-// It's possible to have a currency which does not have a symbol.
-// In this case, we return the currency.
-// This is useful in CurrencySelector, when we select a currency without symbol.
-// (Now you can tell me how unnecessary it is, as no one will ever add such a currency,
-// and you're probably right, but surprises are quite common in the world of software,
-// and also, I had fun doing this)
+// Probably, no one would add a currency which does not have a symbol in _GETSYMBOL_(),
+// but if it would be so, this would prevent a bug from occuring from such a situation.
+// Unnecessary? Yes. Cool? Also yes. :)
 export const getSafeSymbol = (currency) => {
     let symbol = getSymbol(currency);
 
@@ -84,7 +118,7 @@ export const getSafeSymbol = (currency) => {
 }
 
 const _GETSYMBOL_ = (currency) => {
-    let symbol
+    let symbol;
 
     switch (currency.toUpperCase()){
         // From Wikipedia

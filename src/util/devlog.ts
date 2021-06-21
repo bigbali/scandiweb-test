@@ -7,7 +7,7 @@ import log from './log';
 */
 export default function devlog(text: string, mode: string = "success", customStyle?: string) {
     if (isDev()) {
-        // Just pass everything to log function, yes?
+        // Just pass everything to log function, yes? :)
         log(text, mode, customStyle);
     }
 }

@@ -28,6 +28,7 @@ export default class CurrencySelector extends PureComponent {
         });
     }
 
+    // When currency is clicked on, we set that currency to state
     setSelectedCurrency(currency) {
         this.setState({
             selectedCurrency: currency,
@@ -41,7 +42,7 @@ export default class CurrencySelector extends PureComponent {
     generateSymbolizedCurrencyList() {
         const list = this.props.currencies.map((currency, index) => {
             return (
-                // When list tag is clicked on, set selectedCurrency to tag's own
+                // When list tag is clicked on, set selectedCurrency to corresponding currency
                 <li key={index} onClick={() => this.setSelectedCurrency(currency)}>
                     {pairWithSymbol(currency)}
                 </li>

@@ -1,6 +1,5 @@
 .category-selector-wrapper {
-    /*
-        I tend to give links some kind of hover response. Well, if this time I decide not to,
-        this shall at least say I wanted to :)
-    */
+    a {
+        padding-bottom: 0.5rem;
+    }
 }

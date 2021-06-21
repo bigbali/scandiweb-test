@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
 @import './globals';
 
@@ -19,7 +19,11 @@
 body {
     margin: 0;
     min-height: 100%;
-    background-color: var(--color-secondary-2);
+    max-width: 100%;
+    background-color: var(--color-primary-1);
+    // Product grid causes overflow, even though dev tools show nothing of the sort
+    // Not my first time experiencing that, and I never knew why it happens
+    //overflow-x: hidden;
 }
 
 a {

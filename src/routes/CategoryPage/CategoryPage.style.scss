@@ -1,0 +1,21 @@
+.category-page {
+    padding: 6.3rem;
+
+    h1 {
+        margin: 0;
+        margin-bottom: 6.3rem;
+        font-weight: 400;
+        text-transform: capitalize;
+    }
+
+    .product-area {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: auto;
+        grid-gap: 40px;
+        //grid-template-columns: auto auto auto;
+        background-color: #2196F3;
+        //padding: 10px;
+        max-width: 100%;
+    }
+}
