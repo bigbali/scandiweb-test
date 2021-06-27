@@ -11,17 +11,20 @@ import './styles/main.scss';
 
 import { fetchData, extractCategories, extractCurrencies } from './util/dataProcessor';
 
-import log from './util/log';
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner.component';
 import ErrorPage from './routes/ErrorPage/ErrorPage.component';
-import { STATUS_404, STATUS_406 } from './globals/statuscodes';
 import devlog from './util/devlog';
-//import DataContextProvider from './contexts/DataContext';
 import store from './redux/store';
 
 import actions from './redux/actions';
-import { connect } from 'react-redux';
+import { connect, batch } from 'react-redux';
 import * as status from './globals/statuscodes';
+
+// Declare variables here, so we can use them in '.finally()'.
+// The intention is to batch all the actions together to prevent re-renders
+let products;
+let categories;
+let currencies;
 
 class App extends PureComponent {
     constructor(props) {
@@ -30,85 +33,106 @@ class App extends PureComponent {
         this.initialize = this.initialize.bind(this);
         this.getActualApp = this.getActualApp.bind(this);
         this.getAppOrError = this.getAppOrError.bind(this);
+        this.getRedirect = this.getRedirect.bind(this);
+        this.getWithId = this.getWithId.bind(this);
     }
 
-    async initialize() {
-        fetchData().then(data => {
-            const products = data.products;
-            const categories = extractCategories(products);
-            const currencies = extractCurrencies(products);
+    // TODO: store in cache: selected category, product, currency
 
-            this.props.setProducts(products);
-            this.props.setCategories(categories);
-            this.props.setCurrencies(currencies);
-        })
-            .finally(result => {
+    async initialize() {
+        fetchData()
+            .then(data => {
+                // It's way easier to work with items if they have IDs :|
+                products = this.getWithId(data.products)
+                categories = extractCategories(products);
+                currencies = extractCurrencies(products);
+
+                // Batch actions together to prevent re-renders
+                batch(() => {
+                    this.props.setProducts(products);
+                    this.props.setCategories(categories);
+                    this.props.setCurrencies(currencies);
+                    this.props.selectCurrency(currencies[0]);
+                    this.props.setIsLoading(false);
+
+                    // Set 'category.selected' to first category in order to have access to it before
+                    // we set it by clicking on a product card
+                    this.props.selectCategory(categories[0]);
+                })
+            })
+            .catch(error => {
                 this.props.setIsLoading(false);
             })
     }
 
-    getActualApp() {
-        if (this.state.currencies.length > 0 && this.state.categories.length > 0) {
+    getWithId(products) {
+        let idInjectedProducts = [];
+        products.forEach((product, index) => {
+            idInjectedProducts.push({
+                ...product,
+                id: index + 1
+            })
+        })
+
+        return idInjectedProducts
+    }
+
+    getRedirect() {
+        /* 
+            Note: this 'categories' is not the one from state, but the one declared at the top of the file,
+            which is assigned in an async function. This means it will usually be assigned after the first render.
+            Because of that, we check if we have categories, and if not, we don't try to redirect.
+            On second render, we should have all the data we need. 
+            This is when we send in our mighty redirect, so instead of staring at a blank screen,
+            our dear user can stare at our products instead.
+
+            Note #2: if we would redirect on first render, when we don't yet have our data, we couldn't yet redirect to
+            category, so it would be wasted effort
+        */
+        if (categories) {
+            const firstCategory = categories[0];
+            devlog(`Redirecting to first available category: '${firstCategory}'.`);
+
             return (
-                <>
-                    <Router>
-                        <Header categories={this.state.categories} currencies={this.state.currencies} />
-                        <Switch>
-                            {/* Redirect index to first available category */}
-                            <Route exact path="/">
-                                {/* If categories have not yet been assigned, redirect nowhere */}
-                                <Redirect exact from="/" to={this.state.categories.length > 0 ? `category/${this.state.categories[0]}` : ""} />
-                            </Route>
-                            <Route exact path="/category/:category">
-                                <CategoryPage categories={this.state.categories} products={this.state.products} />
-                            </Route>
-                            <Route exact path="/product/:product">
-                                <ProductPage productListings={this.state.products} />
-                            </Route>
-                            <Route exact path="/cart">
-                                <CartPage />
-                            </Route>
-                            <Route>
-                                <ErrorPage message="This page does not exist." statusCode={STATUS_404}>
-                                    Explanation: we could not find this page, for whatever reason.
-                                    We are deeply sorry!
-                                </ErrorPage>
-                            </Route>
-                        </Switch>
-                    </Router>
-                </>
+                <Redirect to={`category/${categories[0]}`} />
             )
         }
+
+        return
+    }
+
+    getActualApp() {
+        return (
+            <Router>
+                <Header />
+                <Switch>
+                    <Route exact path="/category/:category" component={CategoryPage} />
+                    <Route exact path="/product/:product" component={ProductPage} />
+                    <Route exact path="/cart" component={CartPage} />
+                    {/* Redirect from index to page of first available category */}
+                    <Route exact path="/" render={() => {
+                        return this.getRedirect()
+                    }} />
+                    {/* Catch 404 */}
+                    <Route>
+                        <ErrorPage status={status.STATUS_NOT_FOUND} />
+                    </Route>
+                </Switch>
+            </Router>
+        )
     }
 
     getAppOrError() {
-        // Répa, retek, mogyoró
-        // This is all for today :)
         const state = store.getState();
-        const isLoading = state.isLoading;
-        const status = state.status;
-        let application;
 
-        // If we have finished loading, but got no data at all, this will catch that
-        if (status) {
-            application =
-                <ErrorPage message="Could not fetch necessary data." statusCode={STATUS_404}>
-                    We couldn't get data necessary to operate this page.
-                </ErrorPage>
-        }
-        // Similarly, if we have finished loading, but think our data is incorrect, this handles it
-        else if (!this.state.isLoading && this.state.hasDataButIsUnusable) {
-            application =
-                <ErrorPage message="Could not fetch usable data." statusCode={STATUS_406}>
-                    There's something wrong with our data. Oops!
-                </ErrorPage>
-            // I did look it up on Wikipedia. It's real!
+        if (state.status === status.STATUS_OK) {
+            return this.getActualApp();
         }
         else {
-            application = this.getActualApp();
+            return (
+                <ErrorPage status={state.status} />
+            )
         }
-
-        return application;
     }
 
     componentDidMount() {
@@ -118,7 +142,7 @@ class App extends PureComponent {
     render() {
         return (
             <>
-                <LoadingSpinner active={this.props.isLoading} />
+                <LoadingSpinner />
                 {this.getAppOrError()}
             </>
         )
@@ -127,6 +151,7 @@ class App extends PureComponent {
 }
 
 // We spread everything out, so we don't have to bother adding things in when we realize we need them
+// (then wipe our tears off when we realize we re-render 5 times on page load :[)
 const mapStateToProps = (state) => {
     return {
         ...state

@@ -21,39 +21,4 @@ header {
         flex: 1;
     }
 
-    .category-selector {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-
-        li {
-            list-style: none;
-            height: 100%;
-            position: relative;
-
-            a {
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                padding-left: 1rem;
-                padding-right: 1rem;
-                height: 100%;
-                transition: color 0.2s;
-                will-change: color;
-
-                &:hover {
-                    color: var(--color-highlight);
-                }
-            }
-        }
-
-        .current-category {
-            color: var(--color-highlight);
-            font-weight: 600;
-            box-shadow: 0 2px 0 var(--color-highlight);
-        }
-    }
 }

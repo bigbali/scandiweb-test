@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import CategorySelector from '../CategorySelector';
 import HeaderActions from '../HeaderActions';
 import Logo from '../Logo/Logo.component';
@@ -6,13 +6,13 @@ import Logo from '../Logo/Logo.component';
 import './Header.style.scss';
 import devlog from './../../util/devlog';
 
-export default class Header extends Component {
+export default class Header extends PureComponent {
     render() {
         return (
             <header>
-                <CategorySelector categories={this.props.categories} />
+                <CategorySelector />
                 <Logo />
-                <HeaderActions currencies={this.props.currencies} />
+                <HeaderActions />
             </header>
         )
     }

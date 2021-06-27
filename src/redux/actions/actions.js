@@ -1,6 +1,4 @@
 import * as actions from './types';
-// Just noticed VS Code displays these comments as hints
-// Cool, except I don't want it lol
 
 /*************** Loading ***************/
 
@@ -35,6 +33,13 @@ export const setProducts = (products) => {
     return {
       type: actions.PRODUCTS_SET,
       payload: products
+    }
+}
+
+export const selectProduct = (product) => {
+    return {
+      type: actions.PRODUCTS_SELECT,
+      payload: product.id
     }
 }
 

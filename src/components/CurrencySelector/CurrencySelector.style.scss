@@ -18,7 +18,7 @@
     }
 
     .currency-list {
-        display: none;
+        display: block;
         position: absolute;
         top: 65px;
         right: 6.3rem;
@@ -29,6 +29,13 @@
         cursor: default;
         font-size: 18px;
         line-height: 160%;
+
+        // For fade-in animation
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-1rem);
+        transition: opacity, transform 0.1s;
+        transition-timing-function: ease-out;
 
         ul {
             list-style: none;
@@ -51,11 +58,13 @@
 
     &.expanded {
         .currency-list {
-            display: block;
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
         }
 
         .currency-dropdown-toggle>img {
-            transform: rotateZ(180deg);
+            transform: rotateX(180deg);
         }
     }
 }

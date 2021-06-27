@@ -3,14 +3,15 @@ const initialState = {
     status: "OK",
     products: {
         all: [],
+        selected: {}
     },
     categories: {
         all: [],
-        selected: null
+        selected: ""
     },
     currencies : {
-        all: [],
-        selected: null
+        all: ["USD"],
+        selected: "USD"
     },
     cart: {
         products: [{

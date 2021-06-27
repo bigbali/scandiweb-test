@@ -1,32 +1,55 @@
-import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
-
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { NavLink, withRouter } from 'react-router-dom';
+import actions from './../../redux/actions';
 import './CategorySelector.style.scss';
 
-class CategorySelector extends Component {
-    componentDidMount() {
-        //await getGarbage();
+class CategorySelector extends PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.mapCategoriesToLinks = this.mapCategoriesToLinks.bind(this);
+    }
+
+    mapCategoriesToLinks() {
+        return (
+            this.props.categories.all.map((category, index) => {
+                return (
+                    <li key={index}>
+                        {/* That thingy in className: keep category highlighted when we leave the category page */}
+                        <NavLink activeClassName="current-category"
+                            className={`${this.props.categories.selected === category ? "keep-alive" : ""}`}
+                            exact to={category ? `/category/${category}` : ""}
+                            onClick={() => { this.props.selectCategory(category) }}>
+                            {category.toUpperCase()}
+                        </NavLink>
+                    </li>
+                )
+            })
+        )
     }
 
     render() {
-        let categories = this.props.categories.map((category, index) => {
-            return (
-                <li key={index}>
-                    <NavLink activeClassName="current-category" exact to={`/category/${category}`}>
-                        {category.toUpperCase()}
-                    </NavLink>
-                </li>
-            )
-        })
-
         return (
             <div className="category-selector-wrapper">
                 <ul className="category-selector">
-                    {categories}
+                    {this.mapCategoriesToLinks()}
                 </ul>
             </div>
         )
     }
 }
 
-export default CategorySelector;
+const mapStateToProps = (state) => {
+    return {
+        categories: state.categories
+    }
+}
+
+const mapDispatchToProps = () => {
+    return {
+        selectCategory: actions.selectCategory
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps())(withRouter(CategorySelector));

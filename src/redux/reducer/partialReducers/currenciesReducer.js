@@ -1,6 +1,7 @@
 import * as actions from "../../actions/types";
+import initialState from "../../initialState";
 
-const currenciesReducer = (state = [], action) => {
+const currenciesReducer = (state = initialState.currencies, action) => {
     switch (action.type){
         case actions.CURRENCIES_SET:
             return {

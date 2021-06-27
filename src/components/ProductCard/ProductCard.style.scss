@@ -1,8 +1,26 @@
 .product-card {
     padding: 1rem;
     height: auto;
-    background-color: yellow;
+    //background-color: yellow;
     object-fit: cover;
+    position: relative;
+
+    &.out-of-stock {
+        opacity: 0.5;
+
+        .product-card-image {
+            &::before {
+                content: "OUT OF STOCK";
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.5rem;
+            }
+        }
+    }
 
     .product-card-image {
         /* Not supported well enough */
@@ -10,11 +28,18 @@
         /* Alternative to aspect-ratio (354/330 => 1.07 => 107%) */
         padding-bottom: 107%;
         background-size: auto 100%;
+        position: relative;
     }
 
     .product-card-title {
         font-weight: 300;
         font-size: 1.125rem;
         margin: 1.5rem 0 0 0;
+    }
+
+    .product-card-price {
+        font-weight: 500;
+        font-size: 18px;
+        margin: 0.5rem 0 0.5rem 0;
     }
 }

@@ -1,29 +1,65 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import devlog from '../../util/devlog';
+import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
 import './ProductCard.style.scss';
+import actions from '../../redux/actions';
 
-export default class ProductCard extends Component {
+class ProductCard extends Component {
     constructor(props) {
         super(props);
 
-        this.getPriceInSelectedCurrency = this.getPriceInSelectedCurrency.bind(this);
+        this.slugify = this.slugify.bind(this);
+        this.isInStock = this.isInStock.bind(this);
     }
 
-    getPriceInSelectedCurrency() {
+    // TODO: if product is in cart, apply relevant styling
 
+    // Create slug for URL
+    slugify(product) {
+        const slug = product.name
+            .toLowerCase()
+            .replace(/^\s+|\s+$/g, '')
+            .replace(/\s+/g, '-');
+
+        return slug;
     }
+
+    isInStock(product) {
+        return product.inStock;
+    }
+
     render() {
+        const product = this.props.product;
         return (
-            <div className="product-card">
-                <div className="product-card-image" style={{ backgroundImage: `url(${this.props.product.gallery[0]})` }}>
-                </div>
-                {/* I checked what Bootstrap uses here, because I had no idea what element is appropriate */}
-                <h5 className="product-card-title">
-                    {this.props.product.name}
-                </h5>
-                <h5 className="product-card-price">
-                    {this.getPriceInSelectedCurrency()}
-                </h5>
-            </div >
+            // Get slugified href (for better UX) and select product on click to be used in product page
+            <Link to={`/product/${this.slugify(product)}`} onClick={() => this.props.selectProduct(product)}>
+                <div className={`product-card ${this.isInStock(product) ? "" : "out-of-stock"}`}>
+                    <div className="product-card-image" style={{ backgroundImage: `url(${this.props.product.gallery[0]})` }}>
+                    </div>
+                    <h5 className="product-card-title">
+                        {product.name}
+                    </h5>
+                    <p className="product-card-price">
+                        {getPriceInSelectedCurrency(product, this.props.currencies.selected)}
+                    </p>
+                </div >
+            </Link >
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        currencies: state.currencies
+    }
+}
+
+const mapDispatchToProps = () => {
+    return {
+        selectProduct: actions.selectProduct
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps())(ProductCard);

@@ -1,12 +1,12 @@
-import React, { Component } from 'react'
-
+import { Component } from 'react'
+import { connect } from 'react-redux';
 import Spinner from '../../media/svg/sync-solid.svg';
 import './LoadingSpinner.style.scss'
 
-export default class LoadingSpinner extends Component {
+class LoadingSpinner extends Component {
     render() {
         return (
-            <div className={`spinner-wrapper ${this.props.active ? "spinner-active" : ""}`}>
+            <div className={`spinner-wrapper ${this.props.isLoading ? "spinner-active" : ""}`}>
                 <div className="spinner">
                     <img src={Spinner} alt="Please wait..." />
                 </div>
@@ -14,3 +14,12 @@ export default class LoadingSpinner extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        isLoading: state.isLoading
+    }
+}
+
+export default connect(mapStateToProps, null)(LoadingSpinner);
+

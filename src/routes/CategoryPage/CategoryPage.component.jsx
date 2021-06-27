@@ -10,69 +10,49 @@ import ProductCard from '../../components/ProductCard';
 //import { DataContext } from './../../contexts/DataContext';
 import { connect, useSelector } from 'react-redux';
 import actions from '../../redux/actions';
+import * as status from '../../globals/statuscodes';
 
 
 class CategoryPage extends PureComponent {
-    //static contextType = DataContext;
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            isolatedProducts: [],
-            isolateFunction: this.isolateByCategory.bind(this)
-        }
-
-        this.isolateByCategory = this.isolateByCategory.bind(this);
+        this.selectProductsByCategory = this.selectProductsByCategory.bind(this);
         this.getProductCards = this.getProductCards.bind(this);
     }
 
 
-    // If product category matches URL category parameter, store it separately
-    // so we only display products of selected category
-    isolateByCategory(props) {
-        let isolatedProducts = [];
+    // Get current category from URL
+    selectProductsByCategory() {
+        let selectedProducts = [];
 
-        props.products.all.forEach(product => {
-            if (product.category === props.match.params.category) {
-                isolatedProducts.push(product);
+        this.props.products.all.forEach(product => {
+            // FIXME: state gets reset on page reload, so we can't use categories.selected, which makes it redundant
+            if (product.category === this.props.match.params.category) {
+                selectedProducts.push(product);
             }
         })
 
-        return isolatedProducts;
+        return selectedProducts;
     }
 
-    // this.props.match.params.category wouldn't update on first category change
-    // (when I select new category, URL updates, but props don't change until I click it again)
-    // I don't get why that happens, but getDerivedStateFromProps gets props properly
-
-    getProductCards() {
-        return this.state.isolatedProducts.map((product, index) => {
+    getProductCards(products) {
+        return products.map((product, index) => {
             return (
                 <ProductCard key={index} product={product} className="product-card" />
             )
         })
     }
 
-    componentDidMount() {
-        console.log("setCategories");
-        this.props.setCategories("anyád picsája");
-    }
-
-    // On initial render, we have no products
-    // So we set state when we get new props
-    static getDerivedStateFromProps(props, state) {
-        devlog("CategoryPage received new props.");
-        return { isolatedProducts: state.isolateFunction(props) };
-    }
-
     render() {
+        const categoryName = this.props.match.params.category;
+        const products = this.selectProductsByCategory();
+
         // Check if category is in categories list, and if not, return an error page.
         // Else, continue.
-        const categoryName = this.props.match.params.category;
-
         if (!this.props.categories.all.includes(categoryName)) {
-            return <ErrorPage message="Category not found." statusCode={STATUS_404}>We couldn't find the requested category.</ErrorPage>
+            return <ErrorPage status={status.STATUS_NOT_FOUND} />
         }
 
         return (
@@ -81,8 +61,7 @@ class CategoryPage extends PureComponent {
                     {categoryName}
                 </h1>
                 <div className="product-area">
-                    {this.getProductCards()}
-                    {console.log(this.context)}
+                    {this.getProductCards(products)}
                 </div>
             </main>
         )
@@ -90,11 +69,10 @@ class CategoryPage extends PureComponent {
 }
 
 const mapStateToProps = (state) => {
-    return { ...state }
+    return {
+        categories: state.categories,
+        products: state.products
+    }
 }
 
-const mapDispatchToProps = () => {
-    return { ...actions }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps())(withRouter(CategoryPage));
+export default connect(mapStateToProps, null)(withRouter(CategoryPage));

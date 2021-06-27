@@ -91,15 +91,37 @@ export const extractCurrencies = (products) => {
     return currencies;
 }
 
+export const getPriceInSelectedCurrency = (product, currency) => {
+    const prices = product.prices;
+    let relevantPrice;
+
+    // If currency matches selected currency, return that
+    prices.forEach(price => {
+        if (price.currency === currency) {
+            relevantPrice = price.amount;
+        }
+    });
+
+    return `${getSafeSymbol(currency)}${relevantPrice}`;
+}
+
 export const extractAttributes = (products) => {
+    // TODO:
     return "TODO";
 }
 
-// Prepend currency with symbol
+// Prepend currency with symbol, if exists 
+// (we return different things because one of the return values contains a space we don't want)
 export const pairWithSymbol = (currency) => {
-    return `${_GETSYMBOL_(currency)} ${currency}`;
+    const symbol = _GETSYMBOL_(currency);
+    if (symbol){
+        return `${_GETSYMBOL_(currency)} ${currency}`
+    }
+
+    return currency;
 }
 
+/** @deprecated */
 export const getSymbol = (currency) => {
     return _GETSYMBOL_(currency);
 }
@@ -108,7 +130,7 @@ export const getSymbol = (currency) => {
 // but if it would be so, this would prevent a bug from occuring from such a situation.
 // Unnecessary? Yes. Cool? Also yes. :)
 export const getSafeSymbol = (currency) => {
-    let symbol = getSymbol(currency);
+    let symbol = _GETSYMBOL_(currency);
 
     if (!symbol) {
         symbol = currency;
@@ -117,6 +139,7 @@ export const getSafeSymbol = (currency) => {
     return symbol;
 }
 
+// To be used internally, for external use we have 'getSafeSymbol()'
 const _GETSYMBOL_ = (currency) => {
     let symbol;
 
