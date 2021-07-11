@@ -23,6 +23,19 @@
     margin: 0;
 }
 
+.product-description {
+    padding-top: 1rem;
+
+    p:first-of-type {
+        margin-top: 0;
+    }
+
+    * {
+        font-family: "Roboto";
+        font-size: 1rem;
+    }
+}
+
 .attribute-items-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -57,4 +70,25 @@
     &:hover {
         filter: brightness(0.7);
     }
+
+    &.invert-color {
+        color: var(--color-primary-1);
+    }
+
+    &.text.selected {
+        color: var(--color-primary-1);
+        // We use '!important' because we want to override inline style which sets background color
+        background-color: var(--color-primary-2) !important;
+    }
+
+    &.swatch.selected {
+        // Why use an outline? Because we don't want to change the swatch color, even when selected.
+        // And yet... we somehow need to tell the user what is selected.
+        outline: 3px solid var(--color-highlight);
+    }
+}
+
+// Button component doesn't have width set, so we set it here
+.button {
+    width: 100%;
 }

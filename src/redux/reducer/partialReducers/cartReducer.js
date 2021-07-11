@@ -1,34 +1,43 @@
 import * as actions from "../../actions/types";
+import initialState from "../../initialState";
 
-const cartReducer = (state = [], action) => {
+const cartReducer = (state = null, action) => {
     switch (action.type){
         case actions.CART_ADD:
-            return {
-                ...state,
-                products: {
-                    ...state.products
-                    + action.payload
+
+            let variation = {};
+
+            Object.entries(action.payload.attributes).forEach(attribute => {
+                variation = {
+                    ...variation,
+                    [attribute[0]]: attribute[1]
                 }
-            }
+            });
+
+            console.log(state[action.payload.productId])
+
             
-        /*
+            
+            return {
+                [action.payload.productId]: {
+                    variations: [
+                        //...state[action.payload.productId].variations,
+                        variation
+                    ]
+                },
+            }
         case actions.CART_REMOVE:
-            return {
-                ...state,
-                xcurrencies
-            }
+            console.log("rem")
+            return "pello"
         case actions.CART_INCREMENT:
-            return {
-                ...state,
-                xcurrencies
-            }
+            console.log("incr")
+            return "pello"
         case actions.CART_DECREMENT:
-            return {
-                ...state,
-                xcurrencies
-            }
-        */
+            console.log("decr")
+            return "pello"
+
         default:
+            console.log("def")
             return state;
     }
 }

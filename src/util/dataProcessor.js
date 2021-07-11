@@ -9,6 +9,10 @@ const setErrorStatus = (status) => {
     store.dispatch(setStatus(status));
 }
 
+/**
+ * @async
+ * @returns {Promise} Data fetched from GraphQL API.
+ */
 export async function fetchData(){
 
     const client = new ApolloClient({
@@ -17,11 +21,15 @@ export async function fetchData(){
     });
     
     return client.query({
-        // Query string resides in queries.js, because it bothers my eyes with its presence
+        // Query string resides in queries.js, because it bothers my eyes with its presence.
         query: gql (getAll)
     })
     .then(result => {
+        // If we get here, that means API request succeeded...
         const data = result.data.category;
+
+        // ... but that doesn't mean our data is not empty, so here we check for that,
+        // and if we don't have data, then set the appropriate status.
         if (data) {
             return data;
         }
@@ -31,6 +39,7 @@ export async function fetchData(){
         }
     })
     .catch(error => {
+        // If for any reason we get no response, set appropriate status.
         setErrorStatus(actions.STATUS_API_OFFLINE);
         devlog("API did not respond.", "error");
     })
@@ -41,8 +50,8 @@ export async function fetchData(){
 export const extractCategories = (products) => {
     let categories = [];
 
-    // Loop through all the products and push their category to categories, if not yet included
-    // this way we can make sure there is one entry for each category
+    // Loop through all the products and push their category to categories, if not yet included.
+    // This way we can make sure there is one entry for each category.
     try {
         products.forEach(product => {
             let category = product.category;
@@ -53,8 +62,7 @@ export const extractCategories = (products) => {
         });
     }
     catch(error) {
-        // In theory, if 'products' is undefined, we get an error, which means we have no categories
-        // ... and then, how are we going to select categories? :|
+        // Check if for any reason we couldn't isolate categories from all products.
         setErrorStatus(actions.STATUS_DATA_CORRUPTED);
         devlog("Couldn't extract [categories]. Data is probably corrupted.", "error");
     }
@@ -62,13 +70,16 @@ export const extractCategories = (products) => {
     return categories;
 }
 
-// Iterate through all the products and all their prices
-// to determine all available currencies
+/**
+ * Extract all available currencies from supplied products.
+ * @param   {*} products
+ * @returns {Array} An array of currencies in string format.
+ */
 export const extractCurrencies = (products) => {
     let currencies = [];
 
     try {
-        // Cute little nested array :)
+        // It's a nested loop, and it's cute :)
         products.forEach(product => {  
             let prices = product.prices;
     
@@ -95,7 +106,7 @@ export const getPriceInSelectedCurrency = (product, currency) => {
     const prices = product.prices;
     let relevantPrice;
 
-    // If currency matches selected currency, return that
+    // Check if currency matches selected
     prices.forEach(price => {
         if (price.currency === currency) {
             relevantPrice = price.amount;
@@ -110,18 +121,27 @@ export const extractAttributes = (products) => {
     return "TODO";
 }
 
-// Prepend currency with symbol, if exists 
-// (we return different things because one of the return values contains a space we don't want)
+
+/** 
+ * @description
+ * Get currency string prepended with currency symbol
+ * @param {string} currency 
+ * Currency which we want to pair.
+ */
 export const pairWithSymbol = (currency) => {
     const symbol = _GETSYMBOL_(currency);
+
     if (symbol){
         return `${_GETSYMBOL_(currency)} ${currency}`
     }
 
+    // If no symbol, return just currency
     return currency;
 }
 
-/** @deprecated */
+/** @deprecated 
+ * use 'getSafeSymbol()' instead
+ */
 export const getSymbol = (currency) => {
     return _GETSYMBOL_(currency);
 }
@@ -139,7 +159,14 @@ export const getSafeSymbol = (currency) => {
     return symbol;
 }
 
-// To be used internally, for external use we have 'getSafeSymbol()'
+/** 
+ * @description
+ * Get currency symbol based on currency string.
+ * To be used internally. 
+ * For external use, see 'getSafeSymbol()'.
+ * @param {string} currency 
+ * Currency for which we want to find a symbol.
+ */
 const _GETSYMBOL_ = (currency) => {
     let symbol;
 

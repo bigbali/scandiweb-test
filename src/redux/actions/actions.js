@@ -14,8 +14,10 @@ export const setIsLoading = (isTrue) => {
           type: actions.LOADING_SET_TRUE,
         }
     }
-    return {
-        type: actions.LOADING_SET_FALSE,
+    else {
+        return {
+            type: actions.LOADING_SET_FALSE,
+        }
     }
 }
 
@@ -75,32 +77,35 @@ export const selectCurrency = (currency) => {
     }
 }
 
-/*************** Currencies ***************/
+/*************** Categories ***************/
 
-export const cartAdd = (product) => {
+export const cartAdd = (attributes, productId) => {
     return {
-      type: actions.CURRENCIES_SET,
-      payload: product
+        type: actions.CART_ADD,
+        payload: {
+            attributes,
+            productId
+        }
     }
 }
 
 export const cartRemove = (product) => {
     return {
-      type: actions.CURRENCIES_SELECT,
+      type: actions.CART_REMOVE,
       payload: product
     }
 }
 
 export const cartIncrement = (product) => {
     return {
-      type: actions.CURRENCIES_SET,
+      type: actions.CART_INCREMENT,
       payload: product
     }
 }
 
 export const cartDecrement = (product) => {
     return {
-      type: actions.CURRENCIES_SELECT,
+      type: actions.CART_DECREMENT,
       payload: product
     }
 }

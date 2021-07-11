@@ -16,8 +16,6 @@ class ProductPage extends PureComponent {
         this.changeThumbnail = this.changeThumbnail.bind(this);
     }
 
-    // TODO: make thumbnail and selector separate component with state
-
     getProductById() {
         const products = this.props.products;
         let identifiedProduct;
@@ -28,7 +26,7 @@ class ProductPage extends PureComponent {
             }
         })
 
-        devlog(`Selected product with ID: ${products.selected}`)
+        devlog(`Selected product [${identifiedProduct.name}] with ID: ${identifiedProduct.id}`)
         return identifiedProduct;
     }
 
@@ -48,7 +46,6 @@ class ProductPage extends PureComponent {
     }
 
     render() {
-        // I was setting this in 'componentDidMount()' and was wondering why it's undefined :| (I know why, no worries)
         product = this.getProductById();
 
         return (

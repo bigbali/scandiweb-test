@@ -34,7 +34,7 @@
         opacity: 0;
         pointer-events: none;
         transform: translateY(-1rem);
-        transition: opacity, transform 0.1s;
+        transition: opacity 0.1s, transform 0.1s;
         transition-timing-function: ease-out;
 
         ul {

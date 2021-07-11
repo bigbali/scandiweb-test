@@ -28,7 +28,7 @@ class CategoryPage extends PureComponent {
         let selectedProducts = [];
 
         this.props.products.all.forEach(product => {
-            // FIXME: state gets reset on page reload, so we can't use categories.selected, which makes it redundant
+            // FIXME: state gets reset on page reload, so we can't use categories.selected here
             if (product.category === this.props.match.params.category) {
                 selectedProducts.push(product);
             }
