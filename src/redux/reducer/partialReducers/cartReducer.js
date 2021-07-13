@@ -3,23 +3,35 @@ import initialState from "../../initialState";
 
 const cartReducer = (state = null, action) => {
 
-    /*  I could barely keep my eyes open, that's how tired I was...
-        and yet I solved the problem like a magician, with magic.
-        I don't even know how it happened, it just did.
-        Like, I just looked at my screen and 5 minutes later I had a
-        solution without looking anything up.
-        Now I'm making a sleepy pikachu face. Imagine how that looks.
-        :>
-    */
-    const getX = (x, variation) => {
+    const createOrAppendVariations = (product, variation) => {
+        
+        // If we already have this product in the cart, then add to it.
+        // Else, create it. This is because if we try to access product ID while
+        // we don't yet have it, we are in for some 'undefined' trouble
+        if(product){
+            // We'll use this to check if variation already exists
+            let variationExists = false;
 
-        // TODO: check if variation already exist, and if so don't add product
-        // TODO: documentation -> comments... comments everywhere; Refactor, also!
-        if(x){
-            return [
-                ...x["variations"],
-                variation
-            ]
+            product.variations.forEach(existingVariation => {
+                // We must use 'JSON.stringify()' because we can't directly compare objects (as far as I know,
+                // and I might not know)
+                if (JSON.stringify(variation) === JSON.stringify(existingVariation)){
+                    variationExists = true;
+                }
+            })
+
+            if (!variationExists){
+                return [
+                    ...product.variations,
+                    variation
+                ]
+            } 
+            // We can't return nothing because that would delete our variations
+            // ... so we return the variations themselves.
+            else {
+                return [...product.variations]
+            }
+
         }
         else {
             return [
@@ -27,11 +39,13 @@ const cartReducer = (state = null, action) => {
             ]
         }
     }
+
     switch (action.type){
         case actions.CART_ADD:
 
             let variation = {};
 
+            // Assign attribute key/value pairs to 'variation'
             Object.entries(action.payload.attributes).forEach(attribute => {
                 variation = {
                     ...variation,
@@ -39,13 +53,11 @@ const cartReducer = (state = null, action) => {
                 }
             });
 
-            let x = state[action.payload.productId];
-
-            console.log(state)
-
             return {
+                // We spread state out here so we can keep previous products in the cart
+                ...state,
                 [action.payload.productId]: {
-                    variations: getX(state[action.payload.productId], variation)
+                    variations: createOrAppendVariations(state[action.payload.productId], variation)
                 },
             }
         case actions.CART_REMOVE:
