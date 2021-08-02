@@ -7,60 +7,108 @@ import Button from '../Button/Button.component';
 import getBrightness from '../../util/getBrightness';
 import actions from '../../redux/actions'
 
-/*
-
-        TODO: REFACTOR!!!
-        FIXME: REFACTOR!!!
-
- */
-
-// Store data so we can push to state only once, so we don't cause unnecessary re-render
-let initialSelection;
+// Store data so we can push to state only once, so we don't cause unnecessary re-render.
+let initialSelection = {
+    attributes: {}
+};
 
 class ProductActions extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            /*
-            Color: "green",
-            Size: "XXL",
-            ...
-            */
+            attributes: {}
         }
 
+        this.getTitleAndSubtitle = this.getTitleAndSubtitle.bind(this);
         this.mapAttributesToHtml = this.mapAttributesToHtml.bind(this);
         this.selectAttributeItem = this.selectAttributeItem.bind(this);
         this.initialSelectAttributeItems = this.initialSelectAttributeItems.bind(this);
         this.addToInitialSelection = this.addToInitialSelection.bind(this);
         this.addToCart = this.addToCart.bind(this);
+        this.isVariationAlreadyInCart = this.isVariationAlreadyInCart.bind(this);
+    }
+
+    getTitleAndSubtitle(text, getAllExceptFirst) {
+        // First we call this to get the title, then the subtitle, separately
+        const words = text.split(" ");
+
+        if (getAllExceptFirst) {
+            let textWithoutFirstWord = "";
+
+            // We only want to return something here if we have multiple words
+            if (words.length > 1) {
+                const sliceHere = words[0].length;
+                // Remove first word
+                words.shift();
+                textWithoutFirstWord = text.slice(sliceHere);
+            }
+
+            return textWithoutFirstWord
+        }
+
+        return words[0]
+    }
+
+    isVariationAlreadyInCart() {
+        let isInCart = false;
+
+        // First we check if product ID is in cart, then we compare each variation of that product
+        // with the one stored in the state of this component
+        if (this.props.cart.products[this.props.product.id]) {
+            const variations = this.props.cart.products[this.props.product.id].variations;
+            const variation = this.state.attributes;
+
+
+            variations.forEach(thisVariation => {
+                const attributesOfThisVariation = thisVariation.attributes;
+                //devlog(JSON.stringify(attributesOfThisVariation), "error")
+                //devlog(JSON.stringify(variation), "warn")
+
+                if (JSON.stringify(attributesOfThisVariation) === JSON.stringify(variation)) {
+                    isInCart = true;
+                }
+            });
+        }
+
+        return isInCart
     }
 
     addToCart(productId) {
         this.props.dispatchAddToCart(this.state, productId);
     }
 
-    // We populate 'initialSelection', then we assign it to state here
     initialSelectAttributeItems() {
         this.setState(
             initialSelection
         )
     }
 
-    // Dynamically add keys to 'initialSelection'
     addToInitialSelection(attribute, item) {
-        initialSelection = ({
-            ...initialSelection,
-            [attribute.id]: item.value,
-        })
+        initialSelection = {
+            attributes: {
+                ...initialSelection.attributes,
+                [attribute.id.toLowerCase()]: {
+                    value: item.value,
+                    displayValue: item.displayValue,
+                    type: attribute.type
+                }
+            }
+        }
     }
 
-    // TODO: selected attribute doesn't persist across re-renders
+    // TODO: selected attribute doesn't persist across re-renders -> put in localstorage
 
     selectAttributeItem(attribute, item) {
         this.setState({
-            ...this.state,
-            [attribute.id]: item.value
+            attributes: {
+                ...this.state.attributes,
+                [attribute.id.toLowerCase()]: {
+                    value: item.value,
+                    displayValue: item.displayValue,
+                    type: attribute.type
+                }
+            }
         })
 
         devlog(`Selected ${attribute.name}: ${item.displayValue}.`)
@@ -68,27 +116,32 @@ class ProductActions extends PureComponent {
 
 
     mapAttributesToHtml(attributes) {
-        // From attribute type determine class string for attribute value selector buttons
+        // Determine class string for attribute value selector buttons
         const getClassListModifier = (attribute, attrItem) => {
-            const hexColor = attrItem.value;
+            const value = attrItem.value;
+            const stateAttributeEntry = this.state.attributes[attribute.id.toLowerCase()];
             let classListModifier = "attribute-item";
 
             // Differentiate between swatch and text items
             if (attribute.type === "swatch") {
                 classListModifier += " swatch";
+
+                if (getBrightness(value) < 100) {
+                    classListModifier += " invert-color";
+                }
             }
             else {
                 classListModifier += " text";
             }
 
-            // Check if value of item matches the one stored in state for parent attribute
-            if (attrItem.value === this.state[attribute.id]) {
-                classListModifier += " selected";
-            }
-
-            // If background is dark, set a bright foreground color using a CSS class
-            if (getBrightness(hexColor) < 100) {
-                classListModifier += " invert-color";
+            // Check if value of this attribute is already added to state, 
+            // and if so, mark as selected.
+            // Must check if there is 'stateAttributeEntry' because on initial render it won't be set,
+            // and I wouldn't want to greet users with an error because I tried to access a property of 'undefined'.
+            if (stateAttributeEntry) {
+                if (value === stateAttributeEntry.value) {
+                    classListModifier += " selected";
+                }
             }
 
             return classListModifier
@@ -108,7 +161,7 @@ class ProductActions extends PureComponent {
             return inlineStyleModifier
         }
 
-        // Iterate through each attribute and create appropriate attribute items 
+        // Iterate through each attribute and create appropriate attribute item buttons
         // (for example, shoe size selector buttons)
         const mappedAttributes = attributes.map((attribute, attrIndex) => {
 
@@ -122,19 +175,19 @@ class ProductActions extends PureComponent {
 
                 // We want to stop here if we don't yet have state set
                 // (so we don't try to access unset state)
-                if (!this.state) return "";
+                if (!this.state) return null;
 
                 return (
-                    <div key={itemIndex} style={getInlineStyleModifier(attribute.type, item)}
-                        className={getClassListModifier(attribute, item)} aria-label={item.displayValue}
+                    <div
+                        key={itemIndex}
+                        style={getInlineStyleModifier(attribute.type, item)}
+                        className={getClassListModifier(attribute, item)}
+                        aria-label={item.displayValue}
                         onClick={() => this.selectAttributeItem(attribute, item)}>
                         {item.displayValue}
                     </div>
                 )
             });
-
-            //TODO: attribute item html to own component
-            //TODO:  comments and documentation
 
             return (
                 <div key={attrIndex} className="attribute-wrapper">
@@ -171,10 +224,10 @@ class ProductActions extends PureComponent {
         return (
             <div>
                 <h1 className="product-name">
-                    {product.name}
+                    {this.getTitleAndSubtitle(product.name)}
                 </h1>
                 <h2 className="product-stock">
-                    {product.inStock ? "In Stock" : "Out of Stock"}
+                    {this.getTitleAndSubtitle(product.name, true)}
                 </h2>
                 <div>
                     {this.mapAttributesToHtml(product.attributes)}
@@ -185,7 +238,8 @@ class ProductActions extends PureComponent {
                 <p className="product-price">
                     {getPriceInSelectedCurrency(product, this.props.currencies.selected)}
                 </p>
-                <Button text="Add to cart" onClick={() => this.addToCart(product.id)} />
+                <Button text="Add to cart" onClick={() => this.addToCart(product.id)}
+                    disabled={this.isVariationAlreadyInCart()} />
                 <div className="product-description" dangerouslySetInnerHTML={{ __html: product.description }}></div>
             </div>
         )
@@ -194,7 +248,8 @@ class ProductActions extends PureComponent {
 
 const mapStateToProps = (state) => {
     return {
-        currencies: state.currencies
+        currencies: state.currencies,
+        cart: state.cart,
     }
 }
 

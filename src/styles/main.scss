@@ -22,11 +22,45 @@
 
 body {
     margin: 0;
-    min-height: 100%;
     max-width: 100%;
     background-color: var(--color-primary-1);
 }
 
 a {
     text-decoration: none;
+}
+
+#root {
+    max-width: 100%;
+    min-height: 100vh;
+    position: relative;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+.medium {
+    font-weight: 500;
+}
+
+.attribute-selector {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    /*
+        We use 'inline-flex' because we want buttons to align next to each other.
+        We use 'flex' in general because we want to align text to center.
+    */
+
+    border: 1px solid var(--color-primary-2);
+    padding: 0.25rem;
+    background-color: var(--color-primary-1);
+    width: 1.5rem;
+    height: 1.5rem;
+
+    &.horizontal {
+        margin-right: 0.5rem;
+    }
 }

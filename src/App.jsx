@@ -21,7 +21,7 @@ import { connect, batch } from 'react-redux';
 import * as status from './globals/statuscodes';
 
 // Declare variables here, so we can use them anywhere with ease.
-// The intention is to batch all the actions together to prevent re-renders.
+// The intention is to allow batching actions together to prevent re-renders.
 let products;
 let categories;
 let currencies;
@@ -39,15 +39,9 @@ class App extends PureComponent {
 
     // TODO: store in cache: selected category, product, currency
 
-    /**
-     * Initial setup of application:
-     * process API data and dispatch it to Redux store.
-     * @async
-     */
     async initialize() {
         fetchData()
             .then(data => {
-                // It's way easier to work with items if they have IDs :|
                 products = this.getWithId(data.products)
                 categories = extractCategories(products);
                 currencies = extractCurrencies(products);
@@ -59,10 +53,6 @@ class App extends PureComponent {
                     this.props.setCurrencies(currencies);
                     this.props.selectCurrency(currencies[0]);
                     this.props.setIsLoading(false);
-
-                    // Set 'categories.selected' to first category in order to have access to it before
-                    // we set it by clicking on a product card
-                    this.props.selectCategory(categories[0]);
                 })
             })
             .catch(error => {
@@ -70,10 +60,7 @@ class App extends PureComponent {
             })
     }
 
-    /**
-     * @param products 
-     * @returns Supplied products with injected 'id' attribute.
-     */
+    // Returns our products with an additional 'id' property
     getWithId(products) {
         // We duplicate the objects with an additional 'id' attribute.
         let idInjectedProducts = [];
@@ -89,10 +76,6 @@ class App extends PureComponent {
         return idInjectedProducts
     }
 
-    /**
-     * @returns Redirect component that redirects to first category page 
-     * (or 'undefined' if categories is not yet assigned).
-     */
     getRedirect() {
         /* 
             Note: this 'categories' is not the one from state, but the one declared at the top of the file,
@@ -104,6 +87,7 @@ class App extends PureComponent {
 
             TLDR: we can't redirect when we don't yet have categories.
         */
+
         if (categories) {
             const firstCategory = categories[0];
             devlog(`Redirecting to first available category: '${firstCategory}'.`);
@@ -137,6 +121,7 @@ class App extends PureComponent {
         )
     }
 
+    // If everything went smoothly, get our app. Else, get an error page.
     getAppOrError() {
         const state = store.getState();
 

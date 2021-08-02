@@ -113,7 +113,7 @@ export const getPriceInSelectedCurrency = (product, currency) => {
         }
     });
 
-    return `${getSafeSymbol(currency)}${relevantPrice}`;
+    return `${getSymbol(currency)}${relevantPrice}`;
 }
 
 export const extractAttributes = (products) => {
@@ -131,17 +131,14 @@ export const extractAttributes = (products) => {
 export const pairWithSymbol = (currency) => {
     const symbol = _GETSYMBOL_(currency);
 
-    if (symbol){
-        return `${_GETSYMBOL_(currency)} ${currency}`
+    // If symbol matches currency, return only one of them, so we have 'USD' instead of 'USD USD'
+    if (symbol === currency){
+        return symbol
     }
 
-    // If no symbol, return just currency
-    return currency;
+    return `${symbol} ${currency}`
 }
 
-/** @deprecated 
- * use 'getSafeSymbol()' instead
- */
 export const getSymbol = (currency) => {
     return _GETSYMBOL_(currency);
 }
@@ -149,6 +146,9 @@ export const getSymbol = (currency) => {
 // Probably, no one would add a currency which does not have a symbol in _GETSYMBOL_(),
 // but if it would be so, this would prevent a bug from occuring from such a situation.
 // Unnecessary? Yes. Cool? Also yes. :)
+/** @deprecated 
+ * use 'getSymbol()' instead
+ */
 export const getSafeSymbol = (currency) => {
     let symbol = _GETSYMBOL_(currency);
 
@@ -160,12 +160,12 @@ export const getSafeSymbol = (currency) => {
 }
 
 /** 
- * @description
  * Get currency symbol based on currency string.
  * To be used internally. 
- * For external use, see 'getSafeSymbol()'.
+ * For external use, see 'getSymbol()'.
  * @param {string} currency 
  * Currency for which we want to find a symbol.
+ * @returns {string} Symbol or currency itself if can't match currency to a symbol.
  */
 const _GETSYMBOL_ = (currency) => {
     let symbol;
@@ -224,7 +224,7 @@ const _GETSYMBOL_ = (currency) => {
             symbol = "Lei";
             break;
         default:
-            symbol = "";
+            symbol = currency;
     }
 
     return symbol;

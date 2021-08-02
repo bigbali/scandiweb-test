@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
+import getProductById from '../../util/getProductById';
 import actions from './../../redux/actions';
 import './CategorySelector.style.scss';
 
@@ -12,13 +13,19 @@ class CategorySelector extends PureComponent {
     }
 
     mapCategoriesToLinks() {
+        // Keep-alive = keep selected if product has this category
+        const getIsKeepAlive = (category) => {
+            let isSelected = this.props.categories.selected === category;
+
+            return isSelected
+        }
+
         return (
             this.props.categories.all.map((category, index) => {
                 return (
-                    <li key={index}>
-                        {/* That thingy in className: keep category highlighted when we leave the category page */}
+                    <li key={category}>
                         <NavLink activeClassName="current-category"
-                            className={`${this.props.categories.selected === category ? "keep-alive" : ""}`}
+                            className={`${getIsKeepAlive(category) ? "keep-alive" : ""}`}
                             exact to={category ? `/category/${category}` : ""}
                             onClick={() => { this.props.selectCategory(category) }}>
                             {category.toUpperCase()}
@@ -42,6 +49,7 @@ class CategorySelector extends PureComponent {
 
 const mapStateToProps = (state) => {
     return {
+        products: state.products,
         categories: state.categories
     }
 }

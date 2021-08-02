@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import devlog from '../../util/devlog';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
-import './ProductCard.style.scss';
 import actions from '../../redux/actions';
+import './ProductCard.style.scss';
+import CartIcon from '../../media/svg/cart.svg';
 
 class ProductCard extends Component {
     constructor(props) {
@@ -13,8 +13,6 @@ class ProductCard extends Component {
         this.slugify = this.slugify.bind(this);
         this.isInStock = this.isInStock.bind(this);
     }
-
-    // TODO: if product is in cart, apply relevant styling
 
     // Create slug for URL
     slugify(product) {
@@ -32,11 +30,19 @@ class ProductCard extends Component {
 
     render() {
         const product = this.props.product;
+
         return (
             // Get slugified href (for better UX) and select product on click to be used in product page
-            <Link to={`/product/${this.slugify(product)}`} onClick={() => this.props.selectProduct(product)}>
+            <Link to={`/product/${this.slugify(product)}`} className="product-card-wrapper-link" onClick={() => {
+                this.props.selectProduct(product)
+            }}>
                 <div className={`product-card ${this.isInStock(product) ? "" : "out-of-stock"}`}>
-                    <div className="product-card-image" style={{ backgroundImage: `url(${this.props.product.gallery[0]})` }}>
+                    <div className="product-card-image"
+                        style={{ backgroundImage: `url(${this.props.product.gallery[0]})` }}>
+                        {/* I put this thing in here because it allows for more precise positioning */}
+                        <div className="hover-cart-thing">
+                            <img src={CartIcon} alt="Check out" />
+                        </div>
                     </div>
                     <h5 className="product-card-title">
                         {product.name}
@@ -58,7 +64,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = () => {
     return {
-        selectProduct: actions.selectProduct
+        selectProduct: actions.selectProduct,
+        selectCategory: actions.selectCategory,
     }
 }
 

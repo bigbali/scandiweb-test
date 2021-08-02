@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import DropdownIcon from '../../media/svg/dropdown.svg';
 import './CurrencySelector.style.scss';
-import { getSafeSymbol, pairWithSymbol } from './../../util/dataProcessor';
+import { getSafeSymbol, getSymbol, pairWithSymbol } from './../../util/dataProcessor';
 import devlog from '../../util/devlog';
 import { connect } from 'react-redux';
 import actions from '../../redux/actions';
@@ -11,15 +11,15 @@ class CurrencySelector extends PureComponent {
         super(props);
 
         this.state = {
-            isExpanded: false,
+            isExpanded: false
         }
 
-        this.toggle = this.toggle.bind(this);
+        this.toggleExpanded = this.toggleExpanded.bind(this);
         this.setSelectedCurrency = this.setSelectedCurrency.bind(this);
         this.generateSymbolizedCurrencyList = this.generateSymbolizedCurrencyList.bind(this);
     }
 
-    toggle() {
+    toggleExpanded() {
         this.setState({
             isExpanded: !this.state.isExpanded,
         }, () => {
@@ -47,9 +47,9 @@ class CurrencySelector extends PureComponent {
 
     render() {
         return (
-            <div className={`currency-selector-wrapper ${this.state.isExpanded ? "expanded" : ""}`} onClick={this.toggle}>
+            <div className={`currency-selector-wrapper ${this.state.isExpanded ? "expanded" : ""}`} onClick={this.toggleExpanded}>
                 <div className="currency-sign">
-                    {getSafeSymbol(this.props.currencies.selected)}
+                    {getSymbol(this.props.currencies.selected)}
                 </div>
                 <div className="currency-dropdown-toggle">
                     <img src={DropdownIcon} alt="Expand" />

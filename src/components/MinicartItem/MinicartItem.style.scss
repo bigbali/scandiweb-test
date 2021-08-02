@@ -1,0 +1,42 @@
+.minicart-item {
+    display: flex;
+    height: 8.56rem;
+    margin-top: 1.28rem;
+    margin-bottom: 1.28rem;
+
+    .minicart-item-main {
+        display: flex;
+        width: 100%;
+    }
+
+    .left {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .minicart-item-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: auto;
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+        background-color: green;
+    }
+
+    .minicart-item-row {
+        margin-top: auto;
+        background-color: green;
+    }
+
+    .minicart-item-image {
+        margin-left: auto;
+        height: 100%;
+        min-height: 8.56rem;
+    }
+
+    .minicart-item-name {
+        margin: 0;
+    }
+}
