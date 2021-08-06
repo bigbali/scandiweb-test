@@ -17,12 +17,12 @@ export default function log(text: string, mode?: string, customStyle?: string) {
             modifier = `${padding}${corner}${fontSize}${color}background-color: #cc4337`;
             break;
         case "custom":
-            // add CSS at the end to override previous
-            modifier = `${padding}${corner}${fontSize}background-color: black; color:white; ${customStyle}`;
+            modifier = `${padding}${corner}${fontSize}background-color: black; color: white; ${customStyle}`;
             break;
         default:
             modifier = `${padding}${corner}${fontSize}background-color: black; color: white`;
             break;
     }
+
     console.log(`%c${text}`, modifier)
 }

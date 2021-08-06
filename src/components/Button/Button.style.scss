@@ -1,13 +1,6 @@
 .button {
-    background-color: var(--color-highlight);
-    color: var(--color-primary-1);
-    border: none;
-    border-radius: 0;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 1rem;
     text-transform: uppercase;
-    cursor: pointer;
+    user-select: none;
     transition: filter 0.1s;
 
     &:hover {
@@ -17,5 +10,41 @@
     &:disabled {
         filter: brightness(0.7);
         cursor: not-allowed;
+    }
+
+    &.fill {
+        background-color: var(--color-highlight);
+        color: var(--color-primary-1);
+        border: none;
+    }
+
+    &.variation-action {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+
+        // Buttons in CartItem
+        &.big {
+            width: 2.81rem;
+            height: 2.81rem;
+
+            img {
+                width: 0.9375rem;
+                height: 0.9375rem;
+            }
+        }
+
+        // Buttons in MinicartItem
+        &.small {
+            width: 1.5rem;
+            height: 1.5rem;
+
+            img {
+                // Should be 0.5rem, but that is too small for my screen
+                width: 0.6rem;
+                height: 0.6rem;
+            }
+        }
     }
 }

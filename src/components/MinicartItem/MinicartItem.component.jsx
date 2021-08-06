@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
 import devlog from '../../util/devlog';
 import getBrightness from '../../util/getBrightness';
+import Button from '../Button';
+import PlusSymbol from '../../media/svg/plus-symbol.svg';
+import MinusSymbol from '../../media/svg/minus-symbol.svg';
 import './MinicartItem.style.scss';
 
 class MinicartItem extends Component {
@@ -17,8 +20,8 @@ class MinicartItem extends Component {
         this.selectMinicartItemAttribute = this.selectMinicartItemAttribute.bind(this);
     }
 
-    selectMinicartItemAttribute() {
-
+    selectMinicartItemAttribute(attrType) {
+        devlog(JSON.stringify(attrType), "warn")
     }
 
     mapVariationsToProduct() {
@@ -87,85 +90,107 @@ class MinicartItem extends Component {
             return newValues
         }
 
+        const getValueIfNotAlreadyPresent = (attributeTypes, attributeName, attributeData) => {
+            const attributeTypeValues = attributeTypes[attributeName].values;
+            let valueIsAlreadyPresent = false;
+
+            // Remove type property so we can compare
+            let { type, ...attributeDataWithoutType } = { ...attributeData }
+
+            // Compare type values against the one already in 'attributeTypes'
+            attributeTypeValues.forEach(typeValue => {
+                if (JSON.stringify(typeValue) === JSON.stringify(attributeDataWithoutType)) {
+                    valueIsAlreadyPresent = true;
+                }
+            })
+
+            if (!valueIsAlreadyPresent) {
+                return {
+                    value: attributeData.value,
+                    displayValue: attributeData.displayValue,
+                }
+            }
+
+            // if (!attributeTypeValues.includes(attributeDataWithoutType)) {
+            //     devlog(`> ${JSON.stringify(attributeTypeValues)} < does not include ${JSON.stringify(attributeDataWithoutType)} `)
+            //     return {
+            //         value: attributeData.value,
+            //         displayValue: attributeData.displayValue,
+            //     }
+            // }
+            // return { anyad: "anyad" }
+        }
+
         const product = this.props.product;
         const variations = this.props.variations;
         let actualVariations;
-        let attributeTypes;
+        let attributeTypes = {};
 
-        // 'attributeTypes' will have an entry for each possible attribute a specific product can have.
-        // Example: ["color", "size"]. Each type will have values which are of that type. This is used in order to have different attributes in different
-        // rows for each minicart item.
-        //devlog(product.name, "warn")
-        //
+        /* 'attributeTypes': {    <--- this is what it will look like
+                ['color': {
+                    values: [
+                        {
+                            value: '#ffffff', displayValue: 'white'
+                        }
+                    ]
+                }]
+                ...
+            }
+        */
+
+        // devlog(product.name, "error")
+
         variations.forEach(variation => {
             const quantity = variation._quantity;
             const indexableVariationAttributes = Object.entries(variation.attributes);
 
-            //devlog(JSON.stringify(indexableVariationAttributes))
+            indexableVariationAttributes.forEach((variationAttribute, iter) => {
+                const attributeName = variationAttribute[0];
+                const attributeData = variationAttribute[1];
 
-            // variation.attributes.forEach(attribute => {
-            //     const name = attribute.name;
-            //     devlog(name)
-            //devlog("iter")
-            // attrName
-            // const name = actualVariation[0];
-            // // attrValue
-            // const value = actualVariation[1];
-
-            // // TODO: check if swatch or text
-
-            // //devlog(name)
-            // // devlog(JSON.stringify(value))
-
-            // if (!attributeTypes) {
-            //     //devlog("Created attrTypes")
-            //     attributeTypes = [
-            //         {
-            //             name: name,
-            //             values: [
-            //                 value
-            //             ]
-            //         }
-            //     ]
-            // }
-            // else {
-            //     //devlog("Iterating attrTypes")
-            //     attributeTypes.forEach((attributeType, index) => {
-            //         let isAttributeTypeAlreadyInAttributeTypes = false;
-            //         let indexOfAttributeType = null;
-
-            //         if (attributeType.name === name) {
-            //             isAttributeTypeAlreadyInAttributeTypes = true;
-            //             indexOfAttributeType = index;
-            //         }
-
-
-            //         //devlog(index + 1, "warn")
-            //         //devlog(JSON.stringify(attributeType.name))
-            //         // if (attributeType.name === name) {
-            //         //     devlog(`${attributeType.name} = ${name}`)
-            //         //     attributeTypes[index] = {
-            //         //         name: name,
-            //         //         values: getUpdatedValues(value, attributeType.values)
-            //         //     }
-
-            //         //     //devlog(JSON.stringify(attributeTypes[index]))
-            //         //     //devlog(name, "error")
-            //         // }
-            //         // else {
-            //         //     devlog(`${attributeType.name} != ${name}`)
-            //         //     attributeTypes = [
-            //         //         ...attributeTypes,
-            //         //         {
-            //         //             name: name,
-            //         //             values: [
-            //         //                 value
-            //         //             ]
-            //         //         }]
-            //         // }
-            //     })
-            // }
-            //devlog(JSON.stringify(attributeTypes))
+                if (attributeTypes.length < 1) {
+                    attributeTypes = {
+                        [attributeName]: {
+                            values: [
+                                {
+                                    value: attributeData.value,
+                                    displayValue: attributeData.displayValue,
+                                }
+                            ],
+                            type: attributeData.type
+                        }
+                    }
+                }
+                else {
+                    if (attributeTypes[attributeName]) {
+                        attributeTypes = {
+                            ...attributeTypes,
+                            [attributeName]: {
+                                values: [
+                                    ...attributeTypes[attributeName].values,
+                                    getValueIfNotAlreadyPresent(attributeTypes, attributeName, attributeData)
+                                ],
+                                type: attributeData.type
+                            }
+                        }
+                    }
+                    else {
+                        attributeTypes = {
+                            ...attributeTypes,
+                            [attributeName]: {
+                                values: [
+                                    {
+                                        value: attributeData.value,
+                                        displayValue: attributeData.displayValue,
+                                    }
+                                ],
+                                type: attributeData.type
+                            }
+                        }
+                    }
+                }
+            })
+            devlog(JSON.stringify(attributeTypes))
 
         })
 
@@ -176,7 +201,7 @@ class MinicartItem extends Component {
         //     const attributes = type.values.map(value => {
         //         return (
         //             <button key={value.value} className={getClassListModifier(value)} style={getInlineStyleModifier(value)} onClick={() => {
-        //                 this.selectMinicartItemAttribute(value)
+        //                 this.selectMinicartItemAttribute(type)
         //             }}>
         //                 {value.displayValue}
         //             </button>
@@ -204,7 +229,7 @@ class MinicartItem extends Component {
                             {product.name}
                         </p>
                         <p className="medium">
-                            {getPriceInSelectedCurrency(product, this.props.currencies.selected)}
+                            {getPriceInSelectedCurrency(product)}
                         </p>
                         {/*
                         <div className="minicart-item-row">
@@ -216,9 +241,15 @@ class MinicartItem extends Component {
                         {this.mapVariationsToProduct()}
                     </div>
                     <div className="minicart-item-column">
-                        <button className="attribute-selector" >+</button>
-                        <span>1</span>
-                        <button className="attribute-selector">-</button>
+                        <Button className="small variation-action" >
+                            <img src={PlusSymbol} alt="Increment" />
+                        </Button>
+                        <span className="semibold">
+                            1
+                        </span>
+                        <Button className="small variation-action" >
+                            <img src={MinusSymbol} alt="Decrement" />
+                        </Button>
                     </div>
                 </div>
                 <img className="minicart-item-image" src={product.gallery[0]} alt={product.name} />

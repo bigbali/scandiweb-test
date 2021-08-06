@@ -4,8 +4,11 @@ import CartIcon from '../../media/svg/cart.svg';
 import actions from '../../redux/actions';
 import devlog from '../../util/devlog';
 import getProductById from '../../util/getProductById';
+import Button from '../Button';
 import MinicartItem from '../MinicartItem';
 import './Minicart.style.scss';
+
+import { Link } from 'react-router-dom';
 
 class Minicart extends Component {
     constructor(props) {
@@ -28,13 +31,11 @@ class Minicart extends Component {
     mapCartItemsToHtml() {
         // Get all cart entries
         let cartEntries = Object.entries(this.props.cart.products);
+        const mappedItems = cartEntries.map(item => {
 
-        const mappedItems = cartEntries.map((product, productIndex) => {
-
-            const itemId = product[0];
-
-            const itemVariations = product[1].variations;
-            const fullProduct = getProductById(itemId);
+            const productId = item[0];
+            const productVariations = item[1].variations;
+            const fullProduct = getProductById(productId);
 
             //devlog(JSON.stringify(fullProduct))
             /*
@@ -49,7 +50,7 @@ class Minicart extends Component {
             })
             */
             return (
-                <MinicartItem product={fullProduct} variations={itemVariations} key={productIndex} />
+                <MinicartItem product={fullProduct} variations={productVariations} key={productId} />
             )
         });
 
@@ -75,7 +76,21 @@ class Minicart extends Component {
                                 , {` ${counter} ${counter === 1 ? "item" : "items"}`}
                             </span>
                         </p>
+                        <div className={`minicart-is-empty ${counter < 1 ? "totally-empty" : "absolutely-not-empty"} semibold font-size-20`}>
+                            Your cart is empty. <br />
+                            Go buy something!
+                        </div>
                         {this.mapCartItemsToHtml()}
+                        <div className="minicart-buttons-wrapper">
+                            <Button className="font-size-14">
+                                View Bag
+                                {/* I didn't put button in link because that messes up the styling */}
+                                <Link to="/cart" className="fill-entirely" />
+                            </Button>
+                            <Button className="fill">
+                                Checkout
+                            </Button>
+                        </div>
                     </div>
                 </div>
                 <div className="minicart-shade">

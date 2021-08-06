@@ -1,4 +1,4 @@
-let initialState = {
+const initialState = {
     isLoading: true,
     status: "OK",
     products: {
@@ -7,11 +7,11 @@ let initialState = {
     },
     categories: {
         all: [],
-        selected: ""
+        selected: null
     },
     currencies : {
-        all: ["USD"],
-        selected: "USD"
+        all: [],
+        selected: null
     },
     cart: {
         products: [],

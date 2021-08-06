@@ -3,9 +3,11 @@ import './Button.style.scss';
 
 export default class Button extends Component {
     render() {
+        const classAppendage = this.props.className;
+
         return (
-            <button className={`button ${this.props.appendToclassName}`} onClick={this.props.onClick} disabled={this.props.disabled}>
-                {this.props.text}
+            <button className={`button ${classAppendage ? classAppendage : ""}`} onClick={this.props.onClick} disabled={this.props.disabled}>
+                {this.props.children}
             </button>
         )
     }

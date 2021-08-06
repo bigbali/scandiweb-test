@@ -10,7 +10,10 @@ let state = initialState;
 if (savedState) {
     state.cart = savedState.cart;
     state.products = savedState.products;
+    state.currencies = savedState.currencies;
 }
+
+console.log(state.currencies)
 
 const store = createStore(
     reducer,

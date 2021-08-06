@@ -102,8 +102,9 @@ export const extractCurrencies = (products) => {
     return currencies;
 }
 
-export const getPriceInSelectedCurrency = (product, currency) => {
+export const getPriceInSelectedCurrency = (product) => {
     const prices = product.prices;
+    const currency = store.getState().currencies.selected;
     let relevantPrice;
 
     // Check if currency matches selected

@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import Button from '../Button/Button.component';
 import getBrightness from '../../util/getBrightness';
 import actions from '../../redux/actions'
+import getTitle from '../../util/getTitle';
+import getSubtitle from '../../util/getSubtitle';
 
 // Store data so we can push to state only once, so we don't cause unnecessary re-render.
 let initialSelection = {
@@ -20,34 +22,12 @@ class ProductActions extends PureComponent {
             attributes: {}
         }
 
-        this.getTitleAndSubtitle = this.getTitleAndSubtitle.bind(this);
         this.mapAttributesToHtml = this.mapAttributesToHtml.bind(this);
         this.selectAttributeItem = this.selectAttributeItem.bind(this);
         this.initialSelectAttributeItems = this.initialSelectAttributeItems.bind(this);
         this.addToInitialSelection = this.addToInitialSelection.bind(this);
         this.addToCart = this.addToCart.bind(this);
         this.isVariationAlreadyInCart = this.isVariationAlreadyInCart.bind(this);
-    }
-
-    getTitleAndSubtitle(text, getAllExceptFirst) {
-        // First we call this to get the title, then the subtitle, separately
-        const words = text.split(" ");
-
-        if (getAllExceptFirst) {
-            let textWithoutFirstWord = "";
-
-            // We only want to return something here if we have multiple words
-            if (words.length > 1) {
-                const sliceHere = words[0].length;
-                // Remove first word
-                words.shift();
-                textWithoutFirstWord = text.slice(sliceHere);
-            }
-
-            return textWithoutFirstWord
-        }
-
-        return words[0]
     }
 
     isVariationAlreadyInCart() {
@@ -223,11 +203,11 @@ class ProductActions extends PureComponent {
 
         return (
             <div>
-                <h1 className="product-name">
-                    {this.getTitleAndSubtitle(product.name)}
+                <h1 className="product-title semibold font-size-30">
+                    {getTitle(product.name)}
                 </h1>
-                <h2 className="product-stock">
-                    {this.getTitleAndSubtitle(product.name, true)}
+                <h2 className="product-subtitle regular font-size-30">
+                    {getSubtitle(product.name)}
                 </h2>
                 <div>
                     {this.mapAttributesToHtml(product.attributes)}
@@ -236,10 +216,12 @@ class ProductActions extends PureComponent {
                     Price:
                 </p>
                 <p className="product-price">
-                    {getPriceInSelectedCurrency(product, this.props.currencies.selected)}
+                    {getPriceInSelectedCurrency(product)}
                 </p>
-                <Button text="Add to cart" onClick={() => this.addToCart(product.id)}
-                    disabled={this.isVariationAlreadyInCart()} />
+                <Button className="fill" onClick={() => this.addToCart(product.id)}
+                    disabled={this.isVariationAlreadyInCart()}>
+                    Add to cart
+                </Button>
                 <div className="product-description" dangerouslySetInnerHTML={{ __html: product.description }}></div>
             </div>
         )

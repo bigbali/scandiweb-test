@@ -2,8 +2,7 @@ import React from 'react';
 import log from './log';
 
 /*
-    In developmend mode, this will log whatever is passed as argument.
-    In production mode, this will do nothing.
+    This thingy will log things, but only in development mode.
 */
 export default function devlog(text: string, mode: string = "success", customStyle?: string) {
     if (isDev()) {

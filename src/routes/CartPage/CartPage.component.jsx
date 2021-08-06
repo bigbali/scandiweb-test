@@ -1,35 +1,40 @@
-import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
-import actions from '../../redux/actions'
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import CartItem from '../../components/CartItem';
+import actions from '../../redux/actions';
+import getProductById from '../../util/getProductById';
+import './CartPage.style.scss';
 
 class CartPage extends PureComponent {
     constructor(props) {
         super(props)
 
-        this.mapPropsToWhatever = this.mapPropsToWhatever.bind(this)
+        this.mapProductsToHtml = this.mapProductsToHtml.bind(this)
     }
 
-    mapPropsToWhatever() {
+    mapProductsToHtml() {
+        const cartItems = Object.entries(this.props.cart.products);
 
         //TODO: cache CART, CURRENCY
 
-        return <h3>{JSON.stringify(this.props.cart)}</h3>
-        /*
-        return this.props.map(prop => {
+        //return <h3>{JSON.stringify(cartItems)}</h3>
+
+        return cartItems.map(item => {
+            const productId = item[0];
+            const productVariations = item[1].variations;
+            const product = getProductById(productId);
+
             return (
-                <h3>
-                    {prop}
-                </h3>
+                <CartItem product={product} variations={productVariations} key={productId} />
             )
         })
-        */
     }
 
     render() {
         return (
-            <main>
-                <h1>CART</h1>
-                {this.mapPropsToWhatever()}
+            <main className="cart-page">
+                <h1 className="cart-page-title">CART</h1>
+                {this.mapProductsToHtml()}
             </main>
         )
     }

@@ -32,8 +32,10 @@
 
     .minicart-item-image {
         margin-left: auto;
+        width: 6.625rem;
         height: 100%;
         min-height: 8.56rem;
+        object-fit: cover;
     }
 
     .minicart-item-name {

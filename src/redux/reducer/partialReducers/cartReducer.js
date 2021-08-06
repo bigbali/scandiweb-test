@@ -9,7 +9,6 @@ const cartReducer = (state = initialState.cart, action) => {
     let itemCounter = state.counter;
 
     const createOrAppendVariations = (product, variation) => {
-
         // Check if product is already in cart
         if(product){
             // We'll use this to check if variation already exists
