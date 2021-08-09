@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
 import devlog from '../../util/devlog';
@@ -8,7 +8,7 @@ import PlusSymbol from '../../media/svg/plus-symbol.svg';
 import MinusSymbol from '../../media/svg/minus-symbol.svg';
 import './MinicartItem.style.scss';
 
-class MinicartItem extends Component {
+class MinicartItem extends PureComponent {
     constructor(props) {
         super(props);
 
@@ -25,12 +25,11 @@ class MinicartItem extends Component {
     }
 
     mapVariationsToProduct() {
-        const getClassListModifier = (attribute) => {
-            const value = attribute.value;
-            let classListModifier = "attribute-item";
+        const getClassListModifier = (attributeType, value) => {
+            let classListModifier = "variation-action small mr-5";
 
             // Differentiate between swatch and text items
-            if (attribute.type === "swatch") {
+            if (attributeType === "swatch") {
                 classListModifier += " swatch";
 
                 if (getBrightness(value) < 100) {
@@ -38,28 +37,18 @@ class MinicartItem extends Component {
                 }
             }
             else {
-                classListModifier += " text";
+                classListModifier += " text dynamic-width";
             }
-
-            // Check if value of this attribute is already added to state, 
-            // and if so, mark as selected.
-            // Must check if there is 'stateAttributeEntry' because on initial render it won't be set,
-            // and I wouldn't want to greet users with an error because I tried to access a property of 'undefined'.
-            // if (stateAttributeEntry) {
-            //     if (value === stateAttributeEntry.value) {
-            //         classListModifier += " selected";
-            //     }
-            // }
-
             return classListModifier
         }
 
         // This sets background color to attribute item value, if attribute type is swatch
-        const getInlineStyleModifier = (attribute) => {
-            const color = attribute.value;
+        const getInlineStyleModifier = (attributeType, value) => {
+            const color = value;
             let inlineStyleModifier;
 
-            if (attribute.type === "swatch") {
+
+            if (attributeType === "swatch") {
                 inlineStyleModifier = {
                     backgroundColor: color
                 }
@@ -68,31 +57,11 @@ class MinicartItem extends Component {
             return inlineStyleModifier
         }
 
-        const getUpdatedValues = (newValue, oldValues) => {
-            let newValues = [];
-
-            oldValues.forEach((oldValue) => {
-                // devlog("old", "warn")
-                // devlog(JSON.stringify(oldValue), "warn")
-                // devlog("new")
-                // devlog(JSON.stringify(newValue))
-
-                newValues.push(oldValue);
-
-                //devlog(JSON.stringify(newValue))
-                if (!JSON.stringify(newValue) === JSON.stringify(oldValue)) {
-                    newValues.push(newValue);
-                }
-            })
-
-            //devlog(JSON.stringify(oldValues))
-
-            return newValues
-        }
-
-        const getValueIfNotAlreadyPresent = (attributeTypes, attributeName, attributeData) => {
+        const appendValueIfMissing = (attributeTypes, attributeName, attributeData) => {
             const attributeTypeValues = attributeTypes[attributeName].values;
-            let valueIsAlreadyPresent = false;
+            let newAttributeTypeValues = attributeTypeValues;
+
+            let isValueAlreadyPresent = false;
 
             // Remove type property so we can compare
             let { type, ...attributeDataWithoutType } = { ...attributeData }
@@ -100,25 +69,28 @@ class MinicartItem extends Component {
             // Compare type values against the one already in 'attributeTypes'
             attributeTypeValues.forEach(typeValue => {
                 if (JSON.stringify(typeValue) === JSON.stringify(attributeDataWithoutType)) {
-                    valueIsAlreadyPresent = true;
+                    isValueAlreadyPresent = true;
                 }
             })
 
-            if (!valueIsAlreadyPresent) {
-                return {
+            if (!isValueAlreadyPresent) {
+                newAttributeTypeValues.push({
                     value: attributeData.value,
                     displayValue: attributeData.displayValue,
-                }
+                })
             }
 
-            // if (!attributeTypeValues.includes(attributeDataWithoutType)) {
-            //     devlog(`> ${JSON.stringify(attributeTypeValues)} < does not include ${JSON.stringify(attributeDataWithoutType)} `)
-            //     return {
-            //         value: attributeData.value,
-            //         displayValue: attributeData.displayValue,
-            //     }
-            // }
-            // return { anyad: "anyad" }
+            // We can change value of object which is passed by reference like this
+            attributeTypes[attributeName].values = newAttributeTypeValues;
+        }
+
+        // Shorten to one character if swatch
+        const getAttributeDisplayValue = (displayValue, attributeType) => {
+            if (attributeType === "swatch") {
+                return displayValue.slice(0, 1)
+            }
+
+            return displayValue
         }
 
         const product = this.props.product;
@@ -131,10 +103,10 @@ class MinicartItem extends Component {
                     values: [
                         {
                             value: '#ffffff', displayValue: 'white'
-                        }
+                        },
+                        {...}
                     ]
-                }]
-                ...
+                }, ...]
             }
         */
 
@@ -163,16 +135,7 @@ class MinicartItem extends Component {
                 }
                 else {
                     if (attributeTypes[attributeName]) {
-                        attributeTypes = {
-                            ...attributeTypes,
-                            [attributeName]: {
-                                values: [
-                                    ...attributeTypes[attributeName].values,
-                                    getValueIfNotAlreadyPresent(attributeTypes, attributeName, attributeData)
-                                ],
-                                type: attributeData.type
-                            }
-                        }
+                        appendValueIfMissing(attributeTypes, attributeName, attributeData)
                     }
                     else {
                         attributeTypes = {
@@ -190,32 +153,40 @@ class MinicartItem extends Component {
                     }
                 }
             })
-            devlog(JSON.stringify(attributeTypes))
+            // devlog(JSON.stringify(attributeTypes))
 
         })
 
         // For each type of attribute ('color', 'size'...) we'll have a row
-        // const rows = attributeTypes.map(type => {
-        //     //devlog("==== [TYPE] ====", "warn")
-        //     //devlog(JSON.stringify(type))
-        //     const attributes = type.values.map(value => {
-        //         return (
-        //             <button key={value.value} className={getClassListModifier(value)} style={getInlineStyleModifier(value)} onClick={() => {
-        //                 this.selectMinicartItemAttribute(type)
-        //             }}>
-        //                 {value.displayValue}
-        //             </button>
-        //         )
-        //     })
 
-        //     return (
-        //         <div className="minicart-item-row">
-        //             {attributes}
-        //         </div>
-        //     )
-        // })
+        const indexableAttributeTypes = Object.entries(attributeTypes)
+        const rows = indexableAttributeTypes.map(attributeType => {
+            const attributeName = attributeType[0];
+            const attributeValues = attributeType[1].values;
 
-        // return rows
+            //devlog("==== [TYPE] ====", "warn")
+            //devlog(JSON.stringify(attributeValues))
+            const attributes = attributeValues.map(value => {
+                const type = attributeType[1].type;
+
+                return (
+                    <Button key={value.value} className={getClassListModifier(type, value.value)}
+                        style={getInlineStyleModifier(type, value.value)} onClick={() => {
+                            this.selectMinicartItemAttribute(value)
+                        }}>
+                        {getAttributeDisplayValue(value.displayValue, type)}
+                    </Button>
+                )
+            })
+
+            return (
+                <div className="minicart-item-row">
+                    {attributes}
+                </div>
+            )
+        })
+
+        return rows
     }
 
     render() {

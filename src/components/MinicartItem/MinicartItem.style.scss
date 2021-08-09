@@ -10,6 +10,7 @@
     }
 
     .left {
+        width: 100%;
         display: flex;
         flex-direction: column;
     }
@@ -26,6 +27,10 @@
     }
 
     .minicart-item-row {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        flex-wrap: wrap;
         margin-top: auto;
         background-color: green;
     }

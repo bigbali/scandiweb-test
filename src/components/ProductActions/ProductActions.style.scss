@@ -74,16 +74,18 @@
         color: var(--color-primary-1);
     }
 
-    &.text.selected {
-        color: var(--color-primary-1);
-        // We use '!important' because we want to override inline style which sets background color
-        background-color: var(--color-primary-2) !important;
-    }
+    &.selected {
+        &.text {
+            color: var(--color-primary-1);
+            // We use '!important' because we want to override inline style which sets background color
+            background-color: var(--color-primary-2) !important;
+        }
 
-    &.swatch.selected {
-        // Why use an outline? Because we don't want to change the swatch color, even when selected.
-        // And yet... we somehow need to tell the user what is selected.
-        outline: 3px solid var(--color-highlight);
+        &.swatch {
+            // Why use an outline? Because we don't want to change the swatch color, even when selected.
+            // And yet... we somehow need to tell the user what is selected.
+            outline: 3px solid var(--color-highlight);
+        }
     }
 }
 

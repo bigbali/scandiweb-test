@@ -70,17 +70,19 @@ class Minicart extends Component {
                         {counter}
                     </span>
                     <div className="minicart-window">
-                        <p className="my-bag">
-                            <span className="bold">My Bag</span>
-                            <span className="medium">
-                                , {` ${counter} ${counter === 1 ? "item" : "items"}`}
-                            </span>
-                        </p>
-                        <div className={`minicart-is-empty ${counter < 1 ? "totally-empty" : "absolutely-not-empty"} semibold font-size-20`}>
-                            Your cart is empty. <br />
-                            Go buy something!
+                        <div className="minicart-items-wrapper">
+                            <p className="my-bag">
+                                <span className="bold">My Bag</span>
+                                <span className="medium">
+                                    , {` ${counter} ${counter === 1 ? "item" : "items"}`}
+                                </span>
+                            </p>
+                            <div className={`minicart-is-empty ${counter < 1 ? "totally-empty" : "absolutely-not-empty"} semibold font-size-20`}>
+                                Your cart is empty. <br />
+                                Go buy something!
+                            </div>
+                            {this.mapCartItemsToHtml()}
                         </div>
-                        {this.mapCartItemsToHtml()}
                         <div className="minicart-buttons-wrapper">
                             <Button className="font-size-14">
                                 View Bag

@@ -6,7 +6,8 @@ export default class Button extends Component {
         const classAppendage = this.props.className;
 
         return (
-            <button className={`button ${classAppendage ? classAppendage : ""}`} onClick={this.props.onClick} disabled={this.props.disabled}>
+            <button className={`button ${classAppendage ? classAppendage : ""}`} style={this.props.style}
+                onClick={this.props.onClick} disabled={this.props.disabled}>
                 {this.props.children}
             </button>
         )

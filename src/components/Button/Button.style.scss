@@ -23,6 +23,8 @@
         justify-content: center;
         align-items: center;
         padding: 0;
+        font-family: "Source Sans Pro";
+        font-weight: 400;
 
         // Buttons in CartItem
         &.big {
@@ -39,12 +41,35 @@
         &.small {
             width: 1.5rem;
             height: 1.5rem;
+            margin-bottom: 0.5rem;
+
+            &.dynamic-width {
+                width: fit-content;
+                padding-left: 0.3rem;
+                padding-right: 0.3rem;
+            }
 
             img {
                 // Should be 0.5rem, but that is too small for my screen
                 width: 0.6rem;
                 height: 0.6rem;
             }
+        }
+
+        &.invert-color {
+            color: var(--color-primary-1);
+        }
+
+        &.text.selected {
+            color: var(--color-primary-1);
+            // We use '!important' because we want to override inline style which sets background color
+            background-color: var(--color-primary-2) !important;
+        }
+
+        &.swatch.selected {
+            // Why use an outline? Because we don't want to change the swatch color, even when selected.
+            // And yet... we somehow need to tell the user what is selected.
+            outline: 3px solid var(--color-highlight);
         }
     }
 }

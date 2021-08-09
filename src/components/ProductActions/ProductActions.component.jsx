@@ -39,11 +39,8 @@ class ProductActions extends PureComponent {
             const variations = this.props.cart.products[this.props.product.id].variations;
             const variation = this.state.attributes;
 
-
             variations.forEach(thisVariation => {
                 const attributesOfThisVariation = thisVariation.attributes;
-                //devlog(JSON.stringify(attributesOfThisVariation), "error")
-                //devlog(JSON.stringify(variation), "warn")
 
                 if (JSON.stringify(attributesOfThisVariation) === JSON.stringify(variation)) {
                     isInCart = true;

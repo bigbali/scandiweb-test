@@ -115,3 +115,8 @@
         display: flex;
     }
 }
+
+.minicart-items-wrapper {
+    height: calc(100% - 4.5rem);
+    overflow-y: scroll;
+}

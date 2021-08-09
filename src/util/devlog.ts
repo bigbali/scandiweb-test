@@ -1,8 +1,10 @@
 import React from 'react';
 import log from './log';
 
-/*
-    This thingy will log things, but only in development mode.
+/** Log things exclusively in development mode.
+ * @param {string} text text to be printed.
+ * @param {string} mode one of ['success', 'warn', 'error']. It only changes the colour.
+ * @param {string} customStyle text to be printed.
 */
 export default function devlog(text: string, mode: string = "success", customStyle?: string) {
     if (isDev()) {
