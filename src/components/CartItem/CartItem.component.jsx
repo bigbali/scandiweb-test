@@ -9,6 +9,13 @@ import './CartItem.style.scss';
 import Button from '../Button';
 
 export default class CartItem extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            //variations
+        }
+    }
     render() {
         const product = this.props.product;
         const variations = this.props.variations;

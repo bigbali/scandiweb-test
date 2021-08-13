@@ -29,8 +29,6 @@ class App extends PureComponent {
         this.getWithId = this.getWithId.bind(this);
     }
 
-    // TODO: store in cache: selected category, product, currency
-
     async initialize() {
         fetchData()
             .then(data => {
@@ -59,7 +57,6 @@ class App extends PureComponent {
 
     // Returns our products with an additional 'id' property
     getWithId(products) {
-        // We duplicate the objects with an additional 'id' attribute
         let idInjectedProducts = [];
 
         products.forEach((product, index) => {

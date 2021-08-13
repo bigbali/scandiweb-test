@@ -13,15 +13,22 @@ class MinicartItem extends PureComponent {
         super(props);
 
         this.state = {
-            attributeTypes: []
+            attributeRows: [],
+            selected: {}
         }
 
         this.mapVariationsToProduct = this.mapVariationsToProduct.bind(this);
-        this.selectMinicartItemAttribute = this.selectMinicartItemAttribute.bind(this);
+        this.selectMinicartItemAttributeValue = this.selectMinicartItemAttributeValue.bind(this);
     }
 
-    selectMinicartItemAttribute(attrType) {
-        devlog(JSON.stringify(attrType), "warn")
+    selectMinicartItemAttributeValue(value, attributeName) {
+        devlog(`Selected ${attributeName}: ${value.displayValue}`)
+        // this.setState({
+        //     ...this.state,
+        //     selected: {
+        //         [attributeName]: value
+        //     }
+        // })
     }
 
     mapVariationsToProduct() {
@@ -32,13 +39,14 @@ class MinicartItem extends PureComponent {
             if (attributeType === "swatch") {
                 classListModifier += " swatch";
 
-                if (getBrightness(value) < 100) {
+                if (getBrightness(value.value) < 100) {
                     classListModifier += " invert-color";
                 }
             }
             else {
                 classListModifier += " text dynamic-width";
             }
+
             return classListModifier
         }
 
@@ -159,22 +167,34 @@ class MinicartItem extends PureComponent {
 
         // For each type of attribute ('color', 'size'...) we'll have a row
 
+        let attributeRows = []
         const indexableAttributeTypes = Object.entries(attributeTypes)
-        const rows = indexableAttributeTypes.map(attributeType => {
-            const attributeName = attributeType[0];
-            const attributeValues = attributeType[1].values;
+        const rows = indexableAttributeTypes.map(attribute => {
+            const attributeName = attribute[0];
+            const attributeData = attribute[1];
+            const attributeValues = attributeData.values;
+            const attributeType = attributeData.type;
 
-            //devlog("==== [TYPE] ====", "warn")
-            //devlog(JSON.stringify(attributeValues))
-            const attributes = attributeValues.map(value => {
-                const type = attributeType[1].type;
+            attributeRows.push({
+                [attributeName]: attributeData
+            });
+
+            const attributes = attributeValues.map((value, index) => {
+                let isAttributeAlreadySelected = false;
+
+                Object.entries(this.state.selected).forEach(item => {
+
+                })
+                if (index === 0 && JSON.stringify(value) === JSON.stringify(this.state.selected[attributeName])) {
+
+                }
 
                 return (
-                    <Button key={value.value} className={getClassListModifier(type, value.value)}
-                        style={getInlineStyleModifier(type, value.value)} onClick={() => {
-                            this.selectMinicartItemAttribute(value)
+                    <Button key={value.value} className={getClassListModifier(attributeType, value)}
+                        style={getInlineStyleModifier(attributeType, value.value)} onClick={() => {
+                            this.selectMinicartItemAttributeValue(value, attributeName)
                         }}>
-                        {getAttributeDisplayValue(value.displayValue, type)}
+                        {getAttributeDisplayValue(value.displayValue, attributeType)}
                     </Button>
                 )
             })
@@ -185,6 +205,13 @@ class MinicartItem extends PureComponent {
                 </div>
             )
         })
+
+        // Push to state only once per item
+        if (!this.state.attributeRows.length > 0) {
+            this.setState({
+                attributeRows
+            });
+        }
 
         return rows
     }
@@ -202,13 +229,6 @@ class MinicartItem extends PureComponent {
                         <p className="medium">
                             {getPriceInSelectedCurrency(product)}
                         </p>
-                        {/*
-                        <div className="minicart-item-row">
-                            <button className="attribute-selector horizontal">S</button>
-                            <button className="attribute-selector horizontal">M</button>
-                            {this.mapVariationsToProduct()}
-                        </div>
-                        */}
                         {this.mapVariationsToProduct()}
                     </div>
                     <div className="minicart-item-column">
@@ -233,6 +253,10 @@ const mapStateToProps = (state) => {
     return {
         currencies: state.currencies
     }
+}
+
+const mapDispatchToProps = () => {
+
 }
 
 export default connect(mapStateToProps, null)(MinicartItem);
