@@ -3,39 +3,43 @@ import { connect } from 'react-redux';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
 import devlog from '../../util/devlog';
 import getBrightness from '../../util/getBrightness';
+import actions from '../../redux/actions';
 import Button from '../Button';
 import PlusSymbol from '../../media/svg/plus-symbol.svg';
 import MinusSymbol from '../../media/svg/minus-symbol.svg';
 import './MinicartItem.style.scss';
+import getVariationQuantity from '../../util/getVariationQuantity';
 
 class MinicartItem extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            attributeRows: [],
-            selected: {}
+            selectedAttributes: {}
         }
+
+        this.initialAttributeSelection = {};
 
         this.mapVariationsToProduct = this.mapVariationsToProduct.bind(this);
         this.selectMinicartItemAttributeValue = this.selectMinicartItemAttributeValue.bind(this);
     }
 
     selectMinicartItemAttributeValue(value, attributeName) {
-        devlog(`Selected ${attributeName}: ${value.displayValue}`)
-        // this.setState({
-        //     ...this.state,
-        //     selected: {
-        //         [attributeName]: value
-        //     }
-        // })
+        this.setState({
+            selectedAttributes: {
+                ...this.state.selectedAttributes,
+                [attributeName]: value
+            }
+        }, () => {
+            devlog(`Selected ${attributeName}: [${value.displayValue}].`)
+        })
     }
 
     mapVariationsToProduct() {
-        const getClassListModifier = (attributeType, value) => {
+        const getClassListModifier = (attributeType, attributeName, value) => {
             let classListModifier = "variation-action small mr-5";
 
-            // Differentiate between swatch and text items
+            // Differentiate between swatch and text attributes
             if (attributeType === "swatch") {
                 classListModifier += " swatch";
 
@@ -43,8 +47,18 @@ class MinicartItem extends PureComponent {
                     classListModifier += " invert-color";
                 }
             }
+            // Swatch attributes will only have the first letter of the color displayed, so they
+            // can have a fixed width, but text attributes can have multiple chars, so they need to grow
+            // along with their contents
             else {
                 classListModifier += " text dynamic-width";
+            }
+
+            // If state contains attribute value, mark as selected
+            if (this.state.selectedAttributes) {
+                if (JSON.stringify(this.state.selectedAttributes[attributeName]) === JSON.stringify(value)) {
+                    classListModifier += " selected"
+                }
             }
 
             return classListModifier
@@ -54,7 +68,6 @@ class MinicartItem extends PureComponent {
         const getInlineStyleModifier = (attributeType, value) => {
             const color = value;
             let inlineStyleModifier;
-
 
             if (attributeType === "swatch") {
                 inlineStyleModifier = {
@@ -88,7 +101,7 @@ class MinicartItem extends PureComponent {
                 })
             }
 
-            // We can change value of object which is passed by reference like this
+            // Change value of object which is passed by reference like this
             attributeTypes[attributeName].values = newAttributeTypeValues;
         }
 
@@ -101,24 +114,17 @@ class MinicartItem extends PureComponent {
             return displayValue
         }
 
-        const product = this.props.product;
         const variations = this.props.variations;
-        let actualVariations;
-        let attributeTypes = {};
-
-        /* 'attributeTypes': {    <--- this is what it will look like
-                ['color': {
-                    values: [
-                        {
-                            value: '#ffffff', displayValue: 'white'
-                        },
-                        {...}
-                    ]
-                }, ...]
-            }
-        */
-
-        // devlog(product.name, "error")
+        let attributeTypes = {
+            /* color: {
+                values: [
+                    {
+                        value: '#ffffff', displayValue: 'white'
+                    }
+                ]
+            },
+            ... */
+        };
 
         variations.forEach(variation => {
             const quantity = variation._quantity;
@@ -161,36 +167,27 @@ class MinicartItem extends PureComponent {
                     }
                 }
             })
-            // devlog(JSON.stringify(attributeTypes))
 
         })
 
         // For each type of attribute ('color', 'size'...) we'll have a row
-
-        let attributeRows = []
         const indexableAttributeTypes = Object.entries(attributeTypes)
-        const rows = indexableAttributeTypes.map(attribute => {
+        const rows = indexableAttributeTypes.map((attribute, rowIndex) => {
             const attributeName = attribute[0];
             const attributeData = attribute[1];
             const attributeValues = attributeData.values;
             const attributeType = attributeData.type;
 
-            attributeRows.push({
-                [attributeName]: attributeData
-            });
-
-            const attributes = attributeValues.map((value, index) => {
-                let isAttributeAlreadySelected = false;
-
-                Object.entries(this.state.selected).forEach(item => {
-
-                })
-                if (index === 0 && JSON.stringify(value) === JSON.stringify(this.state.selected[attributeName])) {
-
+            const attributes = attributeValues.map((value, attributeIndex) => {
+                if (attributeIndex === 0 && !this.initialAttributeSelection[attributeName]) {
+                    this.initialAttributeSelection = {
+                        ...this.initialAttributeSelection,
+                        [attributeName]: value
+                    }
                 }
 
                 return (
-                    <Button key={value.value} className={getClassListModifier(attributeType, value)}
+                    <Button key={value.value} className={getClassListModifier(attributeType, attributeName, value)}
                         style={getInlineStyleModifier(attributeType, value.value)} onClick={() => {
                             this.selectMinicartItemAttributeValue(value, attributeName)
                         }}>
@@ -200,20 +197,22 @@ class MinicartItem extends PureComponent {
             })
 
             return (
-                <div className="minicart-item-row">
+                <div key={rowIndex} className="minicart-item-row">
                     {attributes}
                 </div>
             )
         })
 
-        // Push to state only once per item
-        if (!this.state.attributeRows.length > 0) {
-            this.setState({
-                attributeRows
-            });
-        }
-
         return rows
+    }
+
+    // Set initial selection
+    componentDidMount() {
+        this.setState({
+            selectedAttributes: this.initialAttributeSelection
+        }, () => {
+            devlog("Initial selection set.")
+        })
     }
 
     render() {
@@ -232,13 +231,17 @@ class MinicartItem extends PureComponent {
                         {this.mapVariationsToProduct()}
                     </div>
                     <div className="minicart-item-column">
-                        <Button className="small variation-action" >
+                        <Button className="small variation-action" onClick={() => {
+                            this.props.incrementItemCount(product.id, this.state.selectedAttributes)
+                        }}>
                             <img src={PlusSymbol} alt="Increment" />
                         </Button>
                         <span className="semibold">
-                            1
+                            {getVariationQuantity(product.id, this.state.selectedAttributes)}
                         </span>
-                        <Button className="small variation-action" >
+                        <Button className="small variation-action" onClick={() => {
+                            this.props.incrementItemCount(product.id, this.state.selectedAttributes)
+                        }}>
                             <img src={MinusSymbol} alt="Decrement" />
                         </Button>
                     </div>
@@ -251,12 +254,16 @@ class MinicartItem extends PureComponent {
 
 const mapStateToProps = (state) => {
     return {
-        currencies: state.currencies
+        currencies: state.currencies,
+        cart: state.cart
     }
 }
 
 const mapDispatchToProps = () => {
-
+    return {
+        incrementItemCount: actions.cartIncrement,
+        decrementItemCount: actions.cartDecrement
+    }
 }
 
-export default connect(mapStateToProps, null)(MinicartItem);
+export default connect(mapStateToProps, mapDispatchToProps())(MinicartItem);

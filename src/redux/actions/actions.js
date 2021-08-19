@@ -96,10 +96,13 @@ export const cartRemove = (product) => {
     }
 }
 
-export const cartIncrement = (product) => {
+export const cartIncrement = (productId, productVariation) => {
     return {
       type: actions.CART_INCREMENT,
-      payload: product
+      payload: {
+          productId,
+          productVariation
+      }
     }
 }
 

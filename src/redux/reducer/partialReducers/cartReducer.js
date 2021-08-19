@@ -10,13 +10,12 @@ const cartReducer = (state = initialState.cart, action) => {
 
     const createOrAppendVariations = (product, variation) => {
         // Check if product is already in cart
-        if(product){
+        if (product){
             // We'll use this to check if variation already exists
             let variationExists = false;
 
             product.variations.forEach(existingVariation => {
-                // We must use 'JSON.stringify()' because we can't directly compare objects 
-                // (as far as I know, and I might not know)
+                // Check if variation already exists in cart
                 if (JSON.stringify(variation) === JSON.stringify(existingVariation)){
                     variationExists = true;
                 }
@@ -46,7 +45,6 @@ const cartReducer = (state = initialState.cart, action) => {
 
     switch (action.type){
         case actions.CART_ADD:
-
             let variation = {
                 // We'll use this to check how many items are in cart of each different variation.
                 // Underscore is to differentiate it from other properties.
@@ -70,15 +68,16 @@ const cartReducer = (state = initialState.cart, action) => {
                 },
                 counter: itemCounter
             }
-        case actions.CART_REMOVE:
-            console.log("rem")
-            return "pello"
+        // case actions.CART_REMOVE:
+        //     console.log("rem")
+        //     return "pello"
         case actions.CART_INCREMENT:
+            devlog(JSON.stringify(action.payload))
             console.log("incr")
-            return "pello"
+            return state
         case actions.CART_DECREMENT:
             console.log("decr")
-            return "pello"
+            return state
 
         default:
             console.log("def")

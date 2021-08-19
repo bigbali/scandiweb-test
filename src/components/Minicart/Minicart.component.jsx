@@ -37,18 +37,6 @@ class Minicart extends Component {
             const productVariations = item[1].variations;
             const fullProduct = getProductById(productId);
 
-            //devlog(JSON.stringify(fullProduct))
-            /*
-            const mappedVariations = itemVariations.map((variation, variationIndex) => {
-
-                // If first item, presume it's '_quantity', which doesn't interest us, so we return null.
-                if (!variationIndex === 0) {
-                    return null
-                }
-
-                return variation
-            })
-            */
             return (
                 <MinicartItem product={fullProduct} variations={productVariations} key={productId} />
             )
@@ -65,7 +53,7 @@ class Minicart extends Component {
                 <div className="minicart-relative">
                     <img className="minicart-icon" src={CartIcon} alt="" />
                     <span className={`minicart-counter ${counter < 1 ? "hidden" : ""}`}>
-                        {/* If counter is zero, just hide counter, because we want it to still take up space
+                        {/* If counter is zero, just hide it, because we want it to still take up space
                         (so cart icon doesn't move to right when counter isn't visible) */}
                         {counter}
                     </span>
@@ -109,11 +97,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-const mapDispatchToProps = (state) => {
-    return {
-        incrementItemCount: actions.cartIncrement,
-        decrementItemCount: actions.cartDecrement
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps())(Minicart);
+export default connect(mapStateToProps, null)(Minicart);
