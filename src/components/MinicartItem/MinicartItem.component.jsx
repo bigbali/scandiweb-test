@@ -36,6 +36,7 @@ class MinicartItem extends PureComponent {
     }
 
     mapVariationsToProduct() {
+        devlog("MAPPING VARIATIONS", "warn")
         const getClassListModifier = (attributeType, attributeName, value) => {
             let classListModifier = "variation-action small mr-5";
 
@@ -216,6 +217,7 @@ class MinicartItem extends PureComponent {
     }
 
     render() {
+        devlog("RENDERING", "error")
         const product = this.props.product;
 
         return (
@@ -238,9 +240,10 @@ class MinicartItem extends PureComponent {
                         </Button>
                         <span className="semibold">
                             {getVariationQuantity(product.id, this.state.selectedAttributes)}
+                            {devlog("GET VARIATION QTTY")}
                         </span>
                         <Button className="small variation-action" onClick={() => {
-                            this.props.incrementItemCount(product.id, this.state.selectedAttributes)
+                            this.props.decrementItemCount(product.id, this.state.selectedAttributes)
                         }}>
                             <img src={MinusSymbol} alt="Decrement" />
                         </Button>

@@ -1,4 +1,6 @@
 import devlog from "../../../util/devlog";
+import getVariationAttributesWithoutType from "../../../util/getVariationAttributesWithoutType";
+import getVariationWithoutType from "../../../util/getVariationAttributesWithoutType";
 import * as actions from "../../actions/types";
 import initialState from "../../initialState";
 
@@ -7,6 +9,15 @@ const cartReducer = (state = initialState.cart, action) => {
     // We will keep check of how many items we have in cart 
     // (every variation is an item on its own)
     let itemCounter = state.counter;
+
+    // Will be assigned later on, if we have the data in payload
+    let productId;
+    let productVariation;
+
+    // This is called 'lazy solution to making sure react-redux causes re-renders
+    // instead of headaches' (which means, return a new object every single time, even
+    // when there is no need to)
+    state = {...state}
 
     const createOrAppendVariations = (product, variation) => {
         // Check if product is already in cart
@@ -70,13 +81,34 @@ const cartReducer = (state = initialState.cart, action) => {
             }
         // case actions.CART_REMOVE:
         //     console.log("rem")
-        //     return "pello"
+        //     return "xoxo"
         case actions.CART_INCREMENT:
-            devlog(JSON.stringify(action.payload))
-            console.log("incr")
+            productId = action.payload.productId;
+            productVariation = action.payload.productVariation;
+        
+           //TODO: idea - attributes in cart without type?
+            state.products[productId].variations.forEach((variation, index) => {
+                if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
+                    state.products[productId].variations[index].quantity++;
+                }
+            })
+
+            devlog(JSON.stringify(state))
+
             return state
+
         case actions.CART_DECREMENT:
-            console.log("decr")
+            productId = action.payload.productId;
+            productVariation = action.payload.productVariation;
+        
+            state.products[productId].variations.forEach((variation, index) => {
+                if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
+                    state.products[productId].variations[index].quantity--;
+                }
+            })
+
+            // TODO: stop counter from being so negative
+            devlog("DECR")
             return state
 
         default:

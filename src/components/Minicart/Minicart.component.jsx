@@ -49,10 +49,12 @@ class Minicart extends Component {
         const counter = this.props.cart.counter;
 
         return (
-            <div className={`minicart-wrapper ${this.state.isExpanded ? "expanded" : ""}`} onClick={this.toggleExpanded}>
+            <div className={`minicart-wrapper ${this.state.isExpanded ? "expanded" : ""}`}>
                 <div className="minicart-relative">
-                    <img className="minicart-icon" src={CartIcon} alt="" />
-                    <span className={`minicart-counter ${counter < 1 ? "hidden" : ""}`}>
+                    {/* TODO: fix the something */}
+                    {/* Duplicate code because I'm too tired to fix something :| */}
+                    <img className="minicart-icon" src={CartIcon} alt="Minicart" onClick={this.toggleExpanded} />
+                    <span className={`minicart-counter ${counter < 1 ? "hidden" : ""}`} onClick={this.toggleExpanded}>
                         {/* If counter is zero, just hide it, because we want it to still take up space
                         (so cart icon doesn't move to right when counter isn't visible) */}
                         {counter}

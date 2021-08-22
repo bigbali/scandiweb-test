@@ -106,9 +106,12 @@ export const cartIncrement = (productId, productVariation) => {
     }
 }
 
-export const cartDecrement = (product) => {
+export const cartDecrement = (productId, productVariation) => {
     return {
       type: actions.CART_DECREMENT,
-      payload: product
+      payload: {
+          productId,
+          productVariation
+      }
     }
 }
