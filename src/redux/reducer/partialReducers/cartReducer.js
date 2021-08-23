@@ -1,8 +1,10 @@
 import devlog from "../../../util/devlog";
 import getVariationAttributesWithoutType from "../../../util/getVariationAttributesWithoutType";
 import getVariationWithoutType from "../../../util/getVariationAttributesWithoutType";
+import { cartIncrement, cartRemove } from "../../actions/actions";
 import * as actions from "../../actions/types";
 import initialState from "../../initialState";
+import store from "../../store";
 
 
 const cartReducer = (state = initialState.cart, action) => {
@@ -79,42 +81,51 @@ const cartReducer = (state = initialState.cart, action) => {
                 },
                 counter: itemCounter
             }
-        // case actions.CART_REMOVE:
-        //     console.log("rem")
-        //     return "xoxo"
-        case actions.CART_INCREMENT:
-            productId = action.payload.productId;
-            productVariation = action.payload.productVariation;
-        
-           //TODO: idea - attributes in cart without type?
-            state.products[productId].variations.forEach((variation, index) => {
-                if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
-                    state.products[productId].variations[index].quantity++;
+            case actions.CART_INCREMENT:
+                // TODO: also increment total counter
+                productId = action.payload.productId;
+                productVariation = action.payload.productVariation;
+                
+                //TODO: idea - attributes in cart without type?
+                state.products[productId].variations.forEach((variation, index) => {
+                    if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
+                        state.products[productId].variations[index].quantity++;
+                    }
+                })
+                
+                devlog(JSON.stringify(state))
+                
+                return state
+                
+                case actions.CART_DECREMENT:
+                    productId = action.payload.productId;
+                    productVariation = action.payload.productVariation;
+                    
+                    state.products[productId].variations.forEach((variation, index) => {
+                        if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
+                            // If quantity is less than 1, remove item altogether
+                            if (state.products[productId].variations[index].quantity > 1) {
+                                state.products[productId].variations[index].quantity--;
+                            }
+                            else {
+                                // let x = {...state}
+                                // x.products[productId].variations.splice(index, index + 1);
+                                // devlog(JSON.stringify(x))
+                                devlog("removing item")
+                            }
+                        }
+                    })
+                    
+                    return state
+                    
+                case actions.CART_REMOVE:
+                    console.log("rem")
+                    return "xoxo"
+
+                default:
+                    console.log("def")
+                    return state;
                 }
-            })
-
-            devlog(JSON.stringify(state))
-
-            return state
-
-        case actions.CART_DECREMENT:
-            productId = action.payload.productId;
-            productVariation = action.payload.productVariation;
-        
-            state.products[productId].variations.forEach((variation, index) => {
-                if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
-                    state.products[productId].variations[index].quantity--;
-                }
-            })
-
-            // TODO: stop counter from being so negative
-            devlog("DECR")
-            return state
-
-        default:
-            console.log("def")
-            return state;
-    }
 
 }
 

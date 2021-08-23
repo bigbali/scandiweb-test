@@ -1,3 +1,4 @@
+import devlog from '../../util/devlog';
 import * as actions from './types';
 
 /*************** Loading ***************/
@@ -89,10 +90,14 @@ export const cartAdd = (attributes, productId) => {
     }
 }
 
-export const cartRemove = (product) => {
+export const cartRemove = (productId, productVariation) => {
+    devlog("rem")
     return {
       type: actions.CART_REMOVE,
-      payload: product
+      payload: {
+        productId,
+        productVariation
+      }    
     }
 }
 
