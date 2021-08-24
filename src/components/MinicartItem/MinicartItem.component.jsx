@@ -217,7 +217,6 @@ class MinicartItem extends PureComponent {
     }
 
     render() {
-        devlog("RENDERING", "error")
         const product = this.props.product;
 
         return (
@@ -240,7 +239,6 @@ class MinicartItem extends PureComponent {
                         </Button>
                         <span className="semibold">
                             {getVariationQuantity(product.id, this.state.selectedAttributes)}
-                            {devlog("GET VARIATION QTTY")}
                         </span>
                         <Button className="small variation-action" onClick={() => {
                             this.props.decrementItemCount(product.id, this.state.selectedAttributes)

@@ -8,10 +8,6 @@ import store from "../../store";
 
 
 const cartReducer = (state = initialState.cart, action) => {
-    // We will keep check of how many items we have in cart 
-    // (every variation is an item on its own)
-    let itemCounter = state.counter;
-
     // Will be assigned later on, if we have the data in payload
     let productId;
     let productVariation;
@@ -35,7 +31,7 @@ const cartReducer = (state = initialState.cart, action) => {
             })
 
             if (!variationExists){
-                itemCounter++;
+                state.counter++;
                 return [
                     ...product.variations,
                     variation
@@ -49,7 +45,7 @@ const cartReducer = (state = initialState.cart, action) => {
             }
         }
         else {
-            itemCounter++;
+            state.counter++;
             return [
                 variation
             ]
@@ -79,17 +75,16 @@ const cartReducer = (state = initialState.cart, action) => {
                         variations: createOrAppendVariations(state.products[action.payload.productId], variation)
                     },
                 },
-                counter: itemCounter
+                counter: state.counter
             }
             case actions.CART_INCREMENT:
-                // TODO: also increment total counter
                 productId = action.payload.productId;
                 productVariation = action.payload.productVariation;
                 
-                //TODO: idea - attributes in cart without type?
                 state.products[productId].variations.forEach((variation, index) => {
                     if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
                         state.products[productId].variations[index].quantity++;
+                        state.counter++;
                     }
                 })
                 
@@ -99,19 +94,25 @@ const cartReducer = (state = initialState.cart, action) => {
                 
                 case actions.CART_DECREMENT:
                     productId = action.payload.productId;
-                    productVariation = action.payload.productVariation;
+                    productVariation = action.payload.productVariation;               
+                    let stateProductVariations = state.products[productId].variations;
                     
-                    state.products[productId].variations.forEach((variation, index) => {
+                    stateProductVariations.forEach((variation, index) => {
                         if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
-                            // If quantity is less than 1, remove item altogether
-                            if (state.products[productId].variations[index].quantity > 1) {
-                                state.products[productId].variations[index].quantity--;
+                            state.counter--;
+
+                            if (stateProductVariations[index].quantity > 1) {
+                                stateProductVariations[index].quantity--;
                             }
+                            // If quantity is less than 1, remove variation altogether
                             else {
-                                // let x = {...state}
-                                // x.products[productId].variations.splice(index, index + 1);
-                                // devlog(JSON.stringify(x))
-                                devlog("removing item")
+                                // Get rid of variation from array
+                                stateProductVariations.splice(index, 1);
+
+                                // If product has no more variations, remove product from cart
+                                if (stateProductVariations.length === 0){
+                                    delete state.products[productId];
+                                }
                             }
                         }
                     })
