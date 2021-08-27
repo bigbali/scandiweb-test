@@ -9,6 +9,7 @@ import PlusSymbol from '../../media/svg/plus-symbol.svg';
 import MinusSymbol from '../../media/svg/minus-symbol.svg';
 import './MinicartItem.style.scss';
 import getVariationQuantity from '../../util/getVariationQuantity';
+import { getInlineStyleModifier, appendValueIfMissing, getAttributeDisplayValue } from '../../util/mapVariationsHelper';
 
 class MinicartItem extends PureComponent {
     constructor(props) {
@@ -36,7 +37,6 @@ class MinicartItem extends PureComponent {
     }
 
     mapVariationsToProduct() {
-        devlog("MAPPING VARIATIONS", "warn")
         const getClassListModifier = (attributeType, attributeName, value) => {
             let classListModifier = "variation-action small mr-5";
 
@@ -65,70 +65,10 @@ class MinicartItem extends PureComponent {
             return classListModifier
         }
 
-        // This sets background color to attribute item value, if attribute type is swatch
-        const getInlineStyleModifier = (attributeType, value) => {
-            const color = value;
-            let inlineStyleModifier;
-
-            if (attributeType === "swatch") {
-                inlineStyleModifier = {
-                    backgroundColor: color
-                }
-            }
-
-            return inlineStyleModifier
-        }
-
-        const appendValueIfMissing = (attributeTypes, attributeName, attributeData) => {
-            const attributeTypeValues = attributeTypes[attributeName].values;
-            let newAttributeTypeValues = attributeTypeValues;
-
-            let isValueAlreadyPresent = false;
-
-            // Remove type property so we can compare
-            let { type, ...attributeDataWithoutType } = { ...attributeData }
-
-            // Compare type values against the one already in 'attributeTypes'
-            attributeTypeValues.forEach(typeValue => {
-                if (JSON.stringify(typeValue) === JSON.stringify(attributeDataWithoutType)) {
-                    isValueAlreadyPresent = true;
-                }
-            })
-
-            if (!isValueAlreadyPresent) {
-                newAttributeTypeValues.push({
-                    value: attributeData.value,
-                    displayValue: attributeData.displayValue,
-                })
-            }
-
-            // Change value of object which is passed by reference like this
-            attributeTypes[attributeName].values = newAttributeTypeValues;
-        }
-
-        // Shorten to one character if swatch
-        const getAttributeDisplayValue = (displayValue, attributeType) => {
-            if (attributeType === "swatch") {
-                return displayValue.slice(0, 1)
-            }
-
-            return displayValue
-        }
-
         const variations = this.props.variations;
-        let attributeTypes = {
-            /* color: {
-                values: [
-                    {
-                        value: '#ffffff', displayValue: 'white'
-                    }
-                ]
-            },
-            ... */
-        };
+        let attributeTypes = {};
 
         variations.forEach(variation => {
-            const quantity = variation._quantity;
             const indexableVariationAttributes = Object.entries(variation.attributes);
 
             indexableVariationAttributes.forEach((variationAttribute, iter) => {

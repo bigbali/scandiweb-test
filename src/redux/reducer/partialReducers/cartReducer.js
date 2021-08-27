@@ -52,11 +52,9 @@ const cartReducer = (state = initialState.cart, action) => {
         }
     }
 
-    switch (action.type){
+    switch (action.type) {
         case actions.CART_ADD:
             let variation = {
-                // We'll use this to check how many items are in cart of each different variation.
-                // Underscore is to differentiate it from other properties.
                 quantity: 1
             };
 
@@ -77,57 +75,55 @@ const cartReducer = (state = initialState.cart, action) => {
                 },
                 counter: state.counter
             }
-            case actions.CART_INCREMENT:
-                productId = action.payload.productId;
-                productVariation = action.payload.productVariation;
-                
-                state.products[productId].variations.forEach((variation, index) => {
-                    if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
-                        state.products[productId].variations[index].quantity++;
-                        state.counter++;
-                    }
-                })
-                
-                devlog(JSON.stringify(state))
-                
-                return state
-                
-                case actions.CART_DECREMENT:
-                    productId = action.payload.productId;
-                    productVariation = action.payload.productVariation;               
-                    let stateProductVariations = state.products[productId].variations;
-                    
-                    stateProductVariations.forEach((variation, index) => {
-                        if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
-                            state.counter--;
 
-                            if (stateProductVariations[index].quantity > 1) {
-                                stateProductVariations[index].quantity--;
-                            }
-                            // If quantity is less than 1, remove variation altogether
-                            else {
-                                // Get rid of variation from array
-                                stateProductVariations.splice(index, 1);
-
-                                // If product has no more variations, remove product from cart
-                                if (stateProductVariations.length === 0){
-                                    delete state.products[productId];
-                                }
-                            }
-                        }
-                    })
-                    
-                    return state
-                    
-                case actions.CART_REMOVE:
-                    console.log("rem")
-                    return "xoxo"
-
-                default:
-                    console.log("def")
-                    return state;
+        case actions.CART_INCREMENT:
+            productId = action.payload.productId;
+            productVariation = action.payload.productVariation;
+            
+            state.products[productId].variations.forEach((variation, index) => {
+                if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
+                    state.products[productId].variations[index].quantity++;
+                    state.counter++;
                 }
+            })
+            
+            return state
+            
+        case actions.CART_DECREMENT:
+            productId = action.payload.productId;
+            productVariation = action.payload.productVariation;               
+            let stateProductVariations = state.products[productId].variations;
+            
+            stateProductVariations.forEach((variation, index) => {
+                if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
+                    state.counter--;
 
+                    if (stateProductVariations[index].quantity > 1) {
+                        stateProductVariations[index].quantity--;
+                    }
+                    // If quantity is less than 1, remove variation altogether
+                    else {
+                        // Get rid of variation from array
+                        stateProductVariations.splice(index, 1);
+
+                        // If product has no more variations, remove product from cart
+                        if (stateProductVariations.length === 0){
+                            delete state.products[productId];
+                        }
+                    }
+                }
+            })
+            
+            return state
+            
+        case actions.CART_REMOVE:
+            console.log("rem")
+            return "xoxo"
+
+        default:
+            console.log("def")
+            return state;
+    }
 }
 
 export default cartReducer;

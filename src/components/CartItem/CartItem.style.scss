@@ -33,3 +33,12 @@
 .product-subtitle {
     margin: 0;
 }
+
+.cart-item-row {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: auto;
+    background-color: green;
+}
