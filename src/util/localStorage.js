@@ -25,6 +25,8 @@ export const loadState = () => {
     } 
     catch (error) {
         devlog(error, "error");
+
+        // Actually, this isn't handled. Hmm.
         return undefined
     }
   }; 

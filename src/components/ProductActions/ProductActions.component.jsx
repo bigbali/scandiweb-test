@@ -1,13 +1,13 @@
 import React, { PureComponent } from 'react';
-import devlog from '../../util/devlog';
-import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
-import './ProductActions.style.scss';
 import { connect } from 'react-redux';
+import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
 import Button from '../Button/Button.component';
-import getBrightness from '../../util/getBrightness';
 import actions from '../../redux/actions'
+import devlog from '../../util/devlog';
+import getBrightness from '../../util/getBrightness';
 import getTitle from '../../util/getTitle';
 import getSubtitle from '../../util/getSubtitle';
+import './ProductActions.style.scss';
 
 // Store data so we can push to state only once, so we don't cause unnecessary re-render.
 let initialSelection = {
@@ -26,8 +26,8 @@ class ProductActions extends PureComponent {
         this.selectAttributeItem = this.selectAttributeItem.bind(this);
         this.initialSelectAttributeItems = this.initialSelectAttributeItems.bind(this);
         this.addToInitialSelection = this.addToInitialSelection.bind(this);
-        this.addToCart = this.addToCart.bind(this);
         this.isVariationAlreadyInCart = this.isVariationAlreadyInCart.bind(this);
+        this.addToCart = this.addToCart.bind(this);
     }
 
     isVariationAlreadyInCart() {
@@ -52,7 +52,7 @@ class ProductActions extends PureComponent {
     }
 
     addToCart(productId) {
-        this.props.dispatchAddToCart(this.state, productId);
+        this.props.dispatchAddToCart(this.state, productId, this.props.product);
     }
 
     initialSelectAttributeItems() {
@@ -73,8 +73,6 @@ class ProductActions extends PureComponent {
             }
         }
     }
-
-    // TODO: selected attribute doesn't persist across re-renders -> put in localstorage
 
     selectAttributeItem(attribute, item) {
         this.setState({

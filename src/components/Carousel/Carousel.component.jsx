@@ -50,7 +50,7 @@ export default class Carousel extends Component {
 
         return (
             <div className="carousel">
-                {/* The design implies you shouldn't see these if the background is white, so I won't work on that */}
+                {/* The design implies you shouldn't see these if the background is white, so I won't work on that :| */}
                 <div className="carousel-action left" onClick={() => {
                     this.changeCarouselImage("left")
                 }}></div>

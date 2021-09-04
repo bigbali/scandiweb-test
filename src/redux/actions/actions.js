@@ -78,9 +78,9 @@ export const selectCurrency = (currency) => {
     }
 }
 
-/*************** Categories ***************/
+/*************** Cart ***************/
 
-export const cartAdd = (attributes, productId) => {
+export const cartAdd = (attributes, productId, productPrice) => {
     return {
         type: actions.CART_ADD,
         payload: {
@@ -90,8 +90,8 @@ export const cartAdd = (attributes, productId) => {
     }
 }
 
+// Apparently, this won't be needed
 export const cartRemove = (productId, productVariation) => {
-    devlog("rem")
     return {
       type: actions.CART_REMOVE,
       payload: {

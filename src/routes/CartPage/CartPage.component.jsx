@@ -4,7 +4,6 @@ import CartItem from '../../components/CartItem';
 import actions from '../../redux/actions';
 import getProductById from '../../util/getProductById';
 import './CartPage.style.scss';
-import devlog from '../../util/devlog';
 
 class CartPage extends PureComponent {
     constructor(props) {
@@ -25,12 +24,10 @@ class CartPage extends PureComponent {
             )
         })
 
-        //devlog(JSON.stringify(mappedCartItems))
         if (mappedCartItems.length > 0) {
             return mappedCartItems
         }
         else {
-            devlog("miapicsa")
             return (
                 <h2 className="cart-page-empty">
                     Hey, your cart is empty.

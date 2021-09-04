@@ -58,7 +58,7 @@
     align-items: center;
     height: 3rem;
     min-width: 4rem;
-    border: 1px solid var(--color-primary-2);
+    border: 1px solid var(--color-dark-primary);
     background-color: white;
     font-family: "Source Sans Pro";
     font-size: 1rem;
@@ -71,20 +71,20 @@
     }
 
     &.invert-color {
-        color: var(--color-primary-1);
+        color: var(--color-light-primary);
     }
 
     &.selected {
         &.text {
-            color: var(--color-primary-1);
+            color: var(--color-light-primary);
             // We use '!important' because we want to override inline style which sets background color
-            background-color: var(--color-primary-2) !important;
+            background-color: var(--color-dark-primary) !important;
         }
 
         &.swatch {
             // Why use an outline? Because we don't want to change the swatch color, even when selected.
             // And yet... we somehow need to tell the user what is selected.
-            outline: 3px solid var(--color-highlight);
+            outline: 3px solid var(--color-theme);
         }
     }
 }

@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
 import actions from '../../redux/actions';
-import './ProductCard.style.scss';
 import CartIcon from '../../media/svg/cart.svg';
+import './ProductCard.style.scss';
 
 class ProductCard extends Component {
     constructor(props) {
@@ -39,7 +39,6 @@ class ProductCard extends Component {
                 <div className={`product-card ${this.isInStock(product) ? "" : "out-of-stock"}`}>
                     <div className="product-card-image"
                         style={{ backgroundImage: `url(${this.props.product.gallery[0]})` }}>
-                        {/* I put this thing in here because it allows for more precise positioning */}
                         <div className="hover-cart-thing">
                             <img src={CartIcon} alt="Check out" />
                         </div>
@@ -48,7 +47,7 @@ class ProductCard extends Component {
                         {product.name}
                     </h5>
                     <p className="product-card-price">
-                        {getPriceInSelectedCurrency(product, this.props.currencies.selected)}
+                        {getPriceInSelectedCurrency(product)}
                     </p>
                 </div >
             </Link >

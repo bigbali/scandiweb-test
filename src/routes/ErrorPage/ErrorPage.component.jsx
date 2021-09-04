@@ -31,8 +31,9 @@ export default class ErrorPage extends Component {
                 errorDescription = "Perhaps try looking elsewhere, eh?";
                 break;
             default:
+                // In theory, this should never get triggered
                 errorMessage = "Everything is fine.";
-                errorDescription = "This is not an error. It's your imagination (we hope).";
+                errorDescription = "This is not an error. It's your imagination (probably).";
                 break;
         }
     }

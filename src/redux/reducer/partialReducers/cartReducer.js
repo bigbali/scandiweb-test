@@ -1,4 +1,6 @@
+import { getPriceInSelectedCurrency } from "../../../util/dataProcessor";
 import devlog from "../../../util/devlog";
+import getProductById from "../../../util/getProductById";
 import getVariationAttributesWithoutType from "../../../util/getVariationAttributesWithoutType";
 import getVariationWithoutType from "../../../util/getVariationAttributesWithoutType";
 import { cartIncrement, cartRemove } from "../../actions/actions";
@@ -73,7 +75,7 @@ const cartReducer = (state = initialState.cart, action) => {
                         variations: createOrAppendVariations(state.products[action.payload.productId], variation)
                     },
                 },
-                counter: state.counter
+                counter: state.counter,
             }
 
         case actions.CART_INCREMENT:

@@ -5,13 +5,14 @@ import { connect, batch } from 'react-redux';
 import devlog from './util/devlog';
 import store from './redux/store';
 import actions from './redux/actions';
-import * as status from './globals/statuscodes';
 import CategoryPage from './routes/CategoryPage';
 import ProductPage from './routes/ProductPage';
 import CartPage from './routes/CartPage';
+import CheckoutPage from './routes/CheckoutPage';
 import ErrorPage from './routes/ErrorPage/ErrorPage.component';
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner.component';
 import Header from './components/Header';
+import * as status from './globals/statuscodes';
 import './styles/main.scss';
 
 let products;
@@ -93,6 +94,7 @@ class App extends PureComponent {
                     <Route exact path="/category/:category" component={CategoryPage} />
                     <Route exact path="/product/:product" component={ProductPage} />
                     <Route exact path="/cart" component={CartPage} />
+                    <Route exact path="/checkout" component={CheckoutPage} />
                     {/* Redirect from index to page of first available category */}
                     <Route exact path="/" render={() => {
                         return this.getRedirect()
@@ -112,9 +114,11 @@ class App extends PureComponent {
 
         // If 'isLoading', we don't yet have our data, so we don't want to render anything yet
         if (state.status === status.STATUS_OK) {
-            if (state.isLoading) {
-                return null
-            }
+            // I don't remember what this used to do, but eliminating it allowed 404 messages to be displayed again
+
+            // if (state.isLoading) {
+            //     return null
+            // }
 
             return this.getActualApp();
         }

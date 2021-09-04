@@ -1,3 +1,9 @@
+/**
+ * Log things out into the console.
+ * @param text 
+ * @param mode 
+ * @param customStyle 
+ */
 export default function log(text: string, mode?: string, customStyle?: string) {
     const padding = "padding: 0.5rem;";
     const corner = "border-radius: 0.25rem;";

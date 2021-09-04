@@ -1,3 +1,7 @@
+/*
+    This is what I could extract to a single file to reduce code duplication.
+*/
+
 /**
  * Set background color if 'attributeType' is 'swatch'.
  * @param {string} attributeType swatch or text.

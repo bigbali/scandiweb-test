@@ -1,6 +1,4 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import devlog from '../../util/devlog';
 import './GallerySelector.style.scss';
 
 export default class GallerySelector extends PureComponent {

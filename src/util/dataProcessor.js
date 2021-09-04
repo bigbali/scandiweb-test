@@ -1,20 +1,24 @@
 import ApolloClient, { InMemoryCache, gql } from 'apollo-boost';
 import { getAll } from '../queries/queries';
+import { setStatus } from './../redux/actions/actions';
 import devlog from './devlog';
 import store from '../redux/store';
-import { setStatus } from './../redux/actions/actions';
 import * as actions from './../redux/actions/types';
+
+/*
+    This file is basically a bunch of helpers in one file.
+*/
 
 const setErrorStatus = (status) => {
     store.dispatch(setStatus(status));
 }
 
 /**
+ * Get all our data.
  * @async
  * @returns {Promise} Data fetched from GraphQL API.
  */
 export async function fetchData(){
-
     const client = new ApolloClient({
         uri: 'http://localhost:4000',
         cache: new InMemoryCache()
@@ -46,7 +50,11 @@ export async function fetchData(){
 }
 
 
-
+/**
+ * Extract all available categories from supplied products.
+ * @param   {*} products
+ * @returns {Array} An array of categories in string format.
+ */
 export const extractCategories = (products) => {
     let categories = [];
 
@@ -102,7 +110,13 @@ export const extractCurrencies = (products) => {
     return currencies;
 }
 
-export const getPriceInSelectedCurrency = (product) => {
+/**
+ * Get price in the currency that is currently selected.
+ * @param {*} product 
+ * @param {boolean} isJustNumber Tell the function if we want it to return just the number.
+ * @returns 
+ */
+export const getPriceInSelectedCurrency = (product, isJustNumber) => {
     const prices = product.prices;
     const currency = store.getState().currencies.selected;
     let relevantPrice;
@@ -114,18 +128,17 @@ export const getPriceInSelectedCurrency = (product) => {
         }
     });
 
-    return `${getSymbol(currency)}${relevantPrice}`;
-}
+    // Return just the number
+    if (isJustNumber){
+        return relevantPrice
+    }
 
-export const extractAttributes = (products) => {
-    // TODO:
-    return "TODO";
+    return `${getSymbol(currency)}${relevantPrice}`
 }
-
 
 /** 
  * @description
- * Get currency string prepended with currency symbol
+ * Get currency string prepended with currency symbol.
  * @param {string} currency 
  * Currency which we want to pair.
  */
@@ -140,14 +153,22 @@ export const pairWithSymbol = (currency) => {
     return `${symbol} ${currency}`
 }
 
+// Actually, what even is the point of this? Hmmm.
 export const getSymbol = (currency) => {
     return _GETSYMBOL_(currency);
+}
+
+export const getSelectedSymbol = () => {
+    const selectedCurrency = store.getState().currencies.selected;
+    return _GETSYMBOL_(selectedCurrency)
 }
 
 // Probably, no one would add a currency which does not have a symbol in _GETSYMBOL_(),
 // but if it would be so, this would prevent a bug from occuring from such a situation.
 // Unnecessary? Yes. Cool? Also yes. :)
-/** @deprecated 
+
+/** 
+ * @deprecated 
  * use 'getSymbol()' instead
  */
 export const getSafeSymbol = (currency) => {
@@ -164,15 +185,13 @@ export const getSafeSymbol = (currency) => {
  * Get currency symbol based on currency string.
  * To be used internally. 
  * For external use, see 'getSymbol()'.
- * @param {string} currency 
- * Currency for which we want to find a symbol.
+ * @param {string} currency currency for which we want to find a symbol.
  * @returns {string} Symbol or currency itself if can't match currency to a symbol.
  */
 const _GETSYMBOL_ = (currency) => {
     let symbol;
 
     switch (currency.toUpperCase()){
-        // From Wikipedia
         case "USD":
             symbol = "$";
             break;

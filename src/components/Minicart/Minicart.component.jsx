@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { getSelectedSymbol } from '../../util/dataProcessor';
 import CartIcon from '../../media/svg/cart.svg';
-import actions from '../../redux/actions';
-import devlog from '../../util/devlog';
-import getProductById from '../../util/getProductById';
 import Button from '../Button';
 import MinicartItem from '../MinicartItem';
+import getTotalPrice from '../../util/getTotalPrice';
+import getProductById from '../../util/getProductById';
 import './Minicart.style.scss';
-
-import { Link } from 'react-router-dom';
 
 class Minicart extends Component {
     constructor(props) {
@@ -51,12 +50,11 @@ class Minicart extends Component {
         return (
             <div className={`minicart-wrapper ${this.state.isExpanded ? "expanded" : ""}`}>
                 <div className="minicart-relative">
-                    {/* TODO: fix the something */}
-                    {/* Duplicate code because I'm too tired to fix something :| */}
+                    {/* Putting these two in a wrapper would mess up the styling, so let's just duplicate 'onClick' */}
                     <img className="minicart-icon" src={CartIcon} alt="Minicart" onClick={this.toggleExpanded} />
                     <span className={`minicart-counter ${counter < 1 ? "hidden" : ""}`} onClick={this.toggleExpanded}>
                         {/* If counter is zero, just hide it, because we want it to still take up space
-                        (so cart icon doesn't move to right when counter isn't visible) */}
+                            (so cart icon doesn't move to right when counter isn't visible) */}
                         {counter}
                     </span>
                     <div className="minicart-window">
@@ -73,21 +71,24 @@ class Minicart extends Component {
                             </div>
                             {this.mapCartItemsToHtml()}
                         </div>
+                        <div className="total-price">
+                            <span>Total</span>
+                            <span>{getSelectedSymbol()}{getTotalPrice()}</span>
+                        </div>
                         <div className="minicart-buttons-wrapper">
-                            <Button className="font-size-14">
+                            {/* This is done this strange way because if I put 'Button' in 'Link', the styling breaks */}
+                            <Button className="font-size-14" onClick={this.toggleExpanded}>
                                 View Bag
-                                {/* I didn't put button in link because that messes up the styling */}
                                 <Link to="/cart" className="fill-entirely" />
                             </Button>
-                            <Button className="fill">
+                            <Button className="fill" onClick={this.toggleExpanded}>
                                 Checkout
+                                <Link to="/checkout" className="fill-entirely" />
                             </Button>
                         </div>
                     </div>
                 </div>
-                <div className="minicart-shade">
-
-                </div>
+                <div className="minicart-shade"></div>
             </div>
         )
     }

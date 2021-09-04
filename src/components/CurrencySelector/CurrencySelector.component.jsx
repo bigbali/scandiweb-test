@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { getSymbol, pairWithSymbol } from './../../util/dataProcessor';
+import actions from '../../redux/actions';
+import devlog from '../../util/devlog';
 import DropdownIcon from '../../media/svg/dropdown.svg';
 import './CurrencySelector.style.scss';
-import { getSafeSymbol, getSymbol, pairWithSymbol } from './../../util/dataProcessor';
-import devlog from '../../util/devlog';
-import { connect } from 'react-redux';
-import actions from '../../redux/actions';
 
 class CurrencySelector extends PureComponent {
     constructor(props) {

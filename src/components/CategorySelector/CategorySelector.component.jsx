@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
-import getProductById from '../../util/getProductById';
 import actions from './../../redux/actions';
 import './CategorySelector.style.scss';
 
@@ -13,7 +12,7 @@ class CategorySelector extends PureComponent {
     }
 
     mapCategoriesToLinks() {
-        // Keep-alive = keep selected if product has this category
+        // Keep-alive = keep selected if selected product has this category
         const getIsKeepAlive = (category) => {
             let isSelected = this.props.categories.selected === category;
 

@@ -29,15 +29,15 @@
             will-change: color;
 
             &:hover {
-                color: var(--color-highlight);
+                color: var(--color-theme);
             }
         }
     }
 
     .current-category,
     .keep-alive {
-        color: var(--color-highlight);
+        color: var(--color-theme);
         font-weight: 600;
-        box-shadow: 0 2px 0 var(--color-highlight);
+        box-shadow: 0 2px 0 var(--color-theme);
     }
 }

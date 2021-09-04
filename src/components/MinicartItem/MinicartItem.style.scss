@@ -23,7 +23,6 @@
         margin-left: auto;
         padding-left: 0.6rem;
         padding-right: 0.6rem;
-        background-color: green;
     }
 
     .minicart-item-row {
@@ -32,7 +31,11 @@
         align-items: center;
         flex-wrap: wrap;
         margin-top: auto;
-        background-color: green;
+
+        // Outline is cut off on the left side. This is a fix for that.
+        button.swatch.selected:first-child {
+            margin-left: 3px;
+        }
     }
 
     .minicart-item-image {

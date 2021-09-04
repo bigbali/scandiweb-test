@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
-import getSubtitle from '../../util/getSubtitle';
-import getTitle from '../../util/getTitle';
+import { appendValueIfMissing, getInlineStyleModifier, getAttributeDisplayValue } from '../../util/mapVariationsHelper';
 import Carousel from '../Carousel';
 import PlusSymbol from '../../media/svg/plus-symbol.svg';
 import MinusSymbol from '../../media/svg/minus-symbol.svg';
-import './CartItem.style.scss';
 import Button from '../Button';
-import getBrightness from '../../util/getBrightness';
-import { appendValueIfMissing, getInlineStyleModifier, getAttributeDisplayValue } from '../../util/mapVariationsHelper';
 import devlog from '../../util/devlog';
 import actions from '../../redux/actions';
-import { connect } from 'react-redux';
+import getBrightness from '../../util/getBrightness';
+import getSubtitle from '../../util/getSubtitle';
+import getTitle from '../../util/getTitle';
 import getVariationQuantity from '../../util/getVariationQuantity';
+import './CartItem.style.scss';
 
 class CartItem extends Component {
     constructor(props) {
@@ -41,7 +41,7 @@ class CartItem extends Component {
 
     mapVariationsToProduct() {
         const getClassListModifier = (attributeType, attributeName, value) => {
-            let classListModifier = "variation-action small mr-5";
+            let classListModifier = "variation-action big wide mr-5";
 
             // Differentiate between swatch and text attributes
             if (attributeType === "swatch") {

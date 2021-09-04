@@ -1,15 +1,15 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
+import { getInlineStyleModifier, appendValueIfMissing, getAttributeDisplayValue } from '../../util/mapVariationsHelper';
 import devlog from '../../util/devlog';
 import getBrightness from '../../util/getBrightness';
 import actions from '../../redux/actions';
 import Button from '../Button';
 import PlusSymbol from '../../media/svg/plus-symbol.svg';
 import MinusSymbol from '../../media/svg/minus-symbol.svg';
-import './MinicartItem.style.scss';
 import getVariationQuantity from '../../util/getVariationQuantity';
-import { getInlineStyleModifier, appendValueIfMissing, getAttributeDisplayValue } from '../../util/mapVariationsHelper';
+import './MinicartItem.style.scss';
 
 class MinicartItem extends PureComponent {
     constructor(props) {
@@ -38,7 +38,7 @@ class MinicartItem extends PureComponent {
 
     mapVariationsToProduct() {
         const getClassListModifier = (attributeType, attributeName, value) => {
-            let classListModifier = "variation-action small mr-5";
+            let classListModifier = "variation-action small minicart-item-attribute-selector mr-5";
 
             // Differentiate between swatch and text attributes
             if (attributeType === "swatch") {
@@ -68,6 +68,7 @@ class MinicartItem extends PureComponent {
         const variations = this.props.variations;
         let attributeTypes = {};
 
+        // Create or append to variations
         variations.forEach(variation => {
             const indexableVariationAttributes = Object.entries(variation.attributes);
 

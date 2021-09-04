@@ -1,5 +1,4 @@
 import store from "../redux/store"
-import devlog from "./devlog";
 import getVariationAttributesWithoutType from "./getVariationAttributesWithoutType";
 
 /**
