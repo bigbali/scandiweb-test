@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
+import { getInlineStyleModifier } from '../../util/mapVariationsHelper';
 import Button from '../Button/Button.component';
 import actions from '../../redux/actions'
 import devlog from '../../util/devlog';
@@ -122,20 +123,6 @@ class ProductActions extends PureComponent {
             return classListModifier
         }
 
-        // This sets background color to attribute item value, if attribute type is swatch
-        const getInlineStyleModifier = (attrType, attrItem) => {
-            const color = attrItem.value;
-            let inlineStyleModifier;
-
-            if (attrType === "swatch") {
-                inlineStyleModifier = {
-                    backgroundColor: color
-                }
-            }
-
-            return inlineStyleModifier
-        }
-
         // Iterate through each attribute and create appropriate attribute item buttons
         // (for example, shoe size selector buttons)
         const mappedAttributes = attributes.map((attribute, attrIndex) => {
@@ -155,7 +142,7 @@ class ProductActions extends PureComponent {
                 return (
                     <div
                         key={itemIndex}
-                        style={getInlineStyleModifier(attribute.type, item)}
+                        style={getInlineStyleModifier(attribute.type, item.value)}
                         className={getClassListModifier(attribute, item)}
                         aria-label={item.displayValue}
                         onClick={() => this.selectAttributeItem(attribute, item)}>
