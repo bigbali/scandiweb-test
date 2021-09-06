@@ -21,7 +21,6 @@ class ProductPage extends PureComponent {
         // then reload, then select another category (we would have a selected category,
         // and a different 'keep-alive' category ('keep-alive': see 'CategorySelector' component)).
         this.props.selectCategory(this.product.category);
-
         devlog(`Loaded product [${this.product.name}] with ID: ${this.product.id}`)
     }
 

@@ -1,13 +1,6 @@
-import { getPriceInSelectedCurrency } from "../../../util/dataProcessor";
-import devlog from "../../../util/devlog";
-import getProductById from "../../../util/getProductById";
 import getVariationAttributesWithoutType from "../../../util/getVariationAttributesWithoutType";
-import getVariationWithoutType from "../../../util/getVariationAttributesWithoutType";
-import { cartIncrement, cartRemove } from "../../actions/actions";
-import * as actions from "../../actions/types";
 import initialState from "../../initialState";
-import store from "../../store";
-
+import * as actions from "../../actions/types";
 
 const cartReducer = (state = initialState.cart, action) => {
     // Will be assigned later on, if we have the data in payload
@@ -119,11 +112,11 @@ const cartReducer = (state = initialState.cart, action) => {
             return state
             
         case actions.CART_REMOVE:
-            console.log("rem")
-            return "xoxo"
+            //console.log("rem")
+            return "Here's an error for you, for trying to use an unimplemented feature! (Unimplemented, because unneeded, apparently)"
 
         default:
-            console.log("def")
+            //console.log("def")
             return state;
     }
 }

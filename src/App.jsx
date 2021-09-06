@@ -114,7 +114,7 @@ class App extends PureComponent {
 
         // If 'isLoading', we don't yet have our data, so we don't want to render anything yet
         if (state.status === status.STATUS_OK) {
-            // I don't remember what this used to do, but eliminating it allowed 404 messages to be displayed again
+            // I don't remember what this is for, but eliminating it allowed 404 messages to be displayed again
 
             // if (state.isLoading) {
             //     return null

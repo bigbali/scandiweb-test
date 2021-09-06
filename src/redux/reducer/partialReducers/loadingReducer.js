@@ -5,7 +5,7 @@ const loadingReducer = (state = initialState.isLoading, action) => {
     switch (action.type){
         case actions.LOADING_TOGGLE:
             return !state
-        // Just in case we want to explicitly set isLoading
+        // Just in case we want to explicitly set 'isLoading'
         case actions.LOADING_SET_TRUE:
             return true
         case actions.LOADING_SET_FALSE:

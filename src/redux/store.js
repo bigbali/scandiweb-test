@@ -13,8 +13,6 @@ if (savedState) {
     state.currencies = savedState.currencies;
 }
 
-console.log(state.currencies)
-
 const store = createStore(
     reducer,
     state,

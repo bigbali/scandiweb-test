@@ -4,7 +4,7 @@ import log from './log';
 /** Log things exclusively in development mode.
  * @param {string} text text to be printed.
  * @param {string} mode one of ['success', 'warn', 'error']. It only changes the colour.
- * @param {string} customStyle text to be printed.
+ * @param {string} customStyle CSS styling to be applied.
 */
 export default function devlog(text: string, mode: string = "success", customStyle?: string) {
     if (isDev()) {

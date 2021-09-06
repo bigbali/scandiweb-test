@@ -1,4 +1,3 @@
-import devlog from '../../util/devlog';
 import * as actions from './types';
 
 /*************** Loading ***************/
