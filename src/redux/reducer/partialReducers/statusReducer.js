@@ -14,6 +14,8 @@ const statusReducer = (state = status.STATUS_OK, action) => {
 
         case actions.STATUS_DATA_CORRUPTED:
             return status.STATUS_DATA_CORRUPTED
+        case actions.STATUS_FAILED_TO_FETCH_CATEGORIES:
+            return status.STATUS_FAILED_TO_FETCH_CATEGORIES
 
         default:
             return state;

@@ -27,7 +27,7 @@ const getTotalPrice = () => {
 
     // Cut off decimals (an of course, this is kinda like an e-commerce site,
     // we so act greedy and round upwards!)
-    return Math.ceil(totalPrice)
+    return totalPrice.toFixed(2)
 }
 
 export default getTotalPrice

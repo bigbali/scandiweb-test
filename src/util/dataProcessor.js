@@ -9,7 +9,7 @@ import * as actions from './../redux/actions/types';
     This file is basically a bunch of helpers in one file.
 */
 
-const setErrorStatus = (status) => {
+export const setErrorStatus = (status) => {
     store.dispatch(setStatus(status));
 }
 
@@ -189,6 +189,8 @@ export const getSafeSymbol = (currency) => {
  * @returns {string} Symbol or currency itself if can't match currency to a symbol.
  */
 const _GETSYMBOL_ = (currency) => {
+    if (!currency) return "";
+
     let symbol;
 
     switch (currency.toUpperCase()){

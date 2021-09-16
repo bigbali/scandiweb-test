@@ -1,8 +1,6 @@
 import React, { PureComponent } from 'react'
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import { fetchData, extractCategories, extractCurrencies } from './util/dataProcessor';
 import { connect, batch } from 'react-redux';
-import devlog from './util/devlog';
 import store from './redux/store';
 import actions from './redux/actions';
 import CategoryPage from './routes/CategoryPage';
@@ -14,91 +12,49 @@ import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner.component
 import Header from './components/Header';
 import * as status from './globals/statuscodes';
 import './styles/main.scss';
-
-let products;
-let categories;
-let currencies;
+import { fetchCategories, fetchCurrencies } from './queries/queries';
+import setErrorStatus from './util/errorHandlers/setErrorStatus';
 
 class App extends PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.initialize = this.initialize.bind(this);
-        this.getActualApp = this.getActualApp.bind(this);
-        this.getAppOrError = this.getAppOrError.bind(this);
-        this.getRedirect = this.getRedirect.bind(this);
-        this.getWithId = this.getWithId.bind(this);
-    }
 
     async initialize() {
-        fetchData()
-            .then(data => {
-                products = this.getWithId(data.products)
-                categories = extractCategories(products);
-                currencies = extractCurrencies(products);
+        let isError = false;
 
-                // Batch actions together to prevent re-renders
-                batch(() => {
-                    this.props.setProducts(products);
-                    this.props.setCategories(categories);
-                    this.props.setCurrencies(currencies);
-                    this.props.setIsLoading(false);
+        const categories = await fetchCategories().catch(error => {
+            isError = true;
+        });
+        const currencies = await fetchCurrencies().catch(error => {
+            isError = true;
+        });
 
-                    // We don't want to override selected currency if we are storing it in 'localStorage'.
-                    // So, this should only run if no currency is loaded from 'savedState' in 'store.js'.
-                    if (!this.props.currencies.selected) {
-                        this.props.selectCurrency(currencies[0]);
-                    }
-                })
-            })
-            .catch(error => {
-                this.props.setIsLoading(false);
-            })
-    }
-
-    // Returns our products with an additional 'id' property
-    getWithId(products) {
-        let idInjectedProducts = [];
-
-        products.forEach((product, index) => {
-            idInjectedProducts.push({
-                ...product,
-                id: index + 1
-                // We add 1 so we start at 'id: 1' instead of 0
-            })
-        })
-
-        return idInjectedProducts
-    }
-
-    getRedirect() {
-        // If we have categories, we want to redirect to the first one.
-        // Else, we say 'here, take this piece o' nothing'.
-        if (categories) {
-            const firstCategory = categories[0];
-            devlog(`Redirecting to first available category: '${firstCategory}'.`);
-
-            return (
-                <Redirect to={`category/${categories[0]}`} />
-            )
+        if (isError) {
+            setErrorStatus(status.STATUS_API_OFFLINE)
         }
 
-        return null
+        batch(() => {
+            this.props.setCategories(categories.data.categories);
+            this.props.setCurrencies(currencies.data.currencies);
+            this.props.setIsLoading(false);
+        })
     }
 
-    getActualApp() {
+    getActualApp = () => {
         return (
             <Router>
                 <Header />
                 <Switch>
-                    <Route exact path="/category/:category" component={CategoryPage} />
-                    <Route exact path="/product/:product" component={ProductPage} />
-                    <Route exact path="/cart" component={CartPage} />
-                    <Route exact path="/checkout" component={CheckoutPage} />
-                    {/* Redirect from index to page of first available category */}
+                    <Route exact path="/category/:category"
+                        component={CategoryPage} />
+                    <Route exact path="/product/:product"
+                        component={ProductPage} />
+                    <Route exact path="/cart"
+                        component={CartPage} />
+                    <Route exact path="/checkout"
+                        component={CheckoutPage} />
                     <Route exact path="/" render={() => {
-                        return this.getRedirect()
+                        <Redirect to={"category/all"} />
                     }} />
+
                     {/* Catch 404 */}
                     <Route>
                         <ErrorPage status={status.STATUS_NOT_FOUND} />
@@ -109,10 +65,9 @@ class App extends PureComponent {
     }
 
     // If everything went smoothly, get our app. Else, get an error page.
-    getAppOrError() {
+    getAppOrError = () => {
         const state = store.getState();
 
-        // If 'isLoading', we don't yet have our data, so we don't want to render anything yet
         if (state.status === status.STATUS_OK) {
             // I don't remember what this is for, but eliminating it allowed 404 messages to be displayed again
 
@@ -143,17 +98,11 @@ class App extends PureComponent {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        ...state
-    }
-}
-
 const mapDispatchToProps = () => {
     return {
         ...actions
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps())(App);
+export default connect(null, mapDispatchToProps())(App);
 

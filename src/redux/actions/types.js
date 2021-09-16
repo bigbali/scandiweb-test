@@ -26,3 +26,7 @@ export const CART_ADD               = "cart/add";
 export const CART_REMOVE            = "cart/remove";
 export const CART_INCREMENT         = "cart/increment";
 export const CART_DECREMENT         = "cart/decrement";
+
+export const STATUS_FAILED_TO_FETCH_CATEGORIES  = "status/failed_to_fetch_categories";
+export const STATUS_FAILED_TO_FETCH_CURRENCIES  = "status/failed_to_fetch_currencies";
+

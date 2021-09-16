@@ -14,17 +14,34 @@ class CurrencySelector extends PureComponent {
             isExpanded: false
         }
 
+        this.setWrapperRef = this.setWrapperRef.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
         this.toggleExpanded = this.toggleExpanded.bind(this);
+        this.setExpanded = this.setExpanded.bind(this);
         this.setSelectedCurrency = this.setSelectedCurrency.bind(this);
-        this.generateSymbolizedCurrencyList = this.generateSymbolizedCurrencyList.bind(this);
+        this.mapCurrenciesToHtml = this.mapCurrenciesToHtml.bind(this);
     }
 
     toggleExpanded() {
         this.setState({
-            isExpanded: !this.state.isExpanded,
-        }, () => {
-            //devlog(`CurrencySelector is ${this.state.isExpanded ? "expanded" : "closed"}.`);
+            isExpanded: !this.state.isExpanded
         });
+    }
+
+    setExpanded(isExpanded) {
+        this.setState({
+            isExpanded: isExpanded
+        });
+    }
+
+    setWrapperRef(node) {
+        this.wrapperRef = node;
+    }
+
+    handleClickOutside(event) {
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+            this.setExpanded(false);
+        }
     }
 
     // When clicked on, set selected currency to whichever currency we clicked on
@@ -34,10 +51,16 @@ class CurrencySelector extends PureComponent {
     }
 
     // Generate HTML list containing currencies paired with their respective symbols
-    generateSymbolizedCurrencyList() {
+    mapCurrenciesToHtml() {
         const list = this.props.currencies.all.map((currency, index) => {
             return (
-                <li key={index} onClick={() => this.setSelectedCurrency(currency)}>
+                <li key={currency}
+                    className={`
+                        ${this.props.currencies.selected === currency
+                            ? "selected"
+                            : ""}
+                        `}
+                    onClick={() => this.setSelectedCurrency(currency)}>
                     {pairWithSymbol(currency)}
                 </li>
             )
@@ -45,9 +68,22 @@ class CurrencySelector extends PureComponent {
         return list;
     }
 
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
     render() {
         return (
-            <div className={`currency-selector-wrapper ${this.state.isExpanded ? "expanded" : ""}`} onClick={this.toggleExpanded}>
+            <div ref={this.setWrapperRef}
+                onClick={this.toggleExpanded}
+                className={`currency-selector-wrapper
+                    ${this.state.isExpanded
+                        ? "expanded"
+                        : ""}`}>
                 <div className="currency-sign">
                     {getSymbol(this.props.currencies.selected)}
                 </div>
@@ -56,7 +92,7 @@ class CurrencySelector extends PureComponent {
                 </div>
                 <div className="currency-list">
                     <ul>
-                        {this.generateSymbolizedCurrencyList()}
+                        {this.mapCurrenciesToHtml()}
                     </ul>
                 </div>
             </div>
@@ -76,4 +112,5 @@ const mapDispatchToProps = () => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps())(CurrencySelector);
+export default connect(mapStateToProps, mapDispatchToProps())
+    (CurrencySelector);

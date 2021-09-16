@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
+import devlog from '../../util/devlog';
 import actions from './../../redux/actions';
 import './CategorySelector.style.scss';
 
@@ -24,9 +25,12 @@ class CategorySelector extends PureComponent {
                 return (
                     <li key={category}>
                         <NavLink activeClassName="current-category"
-                            className={`${getIsKeepAlive(category) ? "keep-alive" : ""}`}
-                            exact to={category ? `/category/${category}` : ""}
-                            onClick={() => { this.props.selectCategory(category) }}>
+                            // className={`${getIsKeepAlive(category) ? "keep-alive" : ""}`}
+                            exact
+                            to={category ? `/category/${category}` : ""}
+                            onClick={() => {
+                                this.props.selectCategory(category)
+                            }}>
                             {category.toUpperCase()}
                         </NavLink>
                     </li>
@@ -35,11 +39,31 @@ class CategorySelector extends PureComponent {
         )
     }
 
+    componentDidMount() {
+        const currentCategory = this.props.match.params.category;
+
+        if (!this.props.categories.selected) {
+            this.props.selectCategory(currentCategory);
+        }
+    }
+
+    // componentDidUpdate() {
+    //     const currentCategory = this.props.match.params.category;
+
+    //     if (currentCategory !== this.props.categories.selected) {
+    //         this.props.selectCategory(currentCategory);
+    //     }
+    // }
+
     render() {
         return (
             <div className="category-selector-wrapper">
                 <ul className="category-selector">
-                    {this.mapCategoriesToLinks()}
+                    {
+                        this.props.categories
+                            ? this.mapCategoriesToLinks()
+                            : null
+                    }
                 </ul>
             </div>
         )
@@ -48,7 +72,6 @@ class CategorySelector extends PureComponent {
 
 const mapStateToProps = (state) => {
     return {
-        products: state.products,
         categories: state.categories
     }
 }

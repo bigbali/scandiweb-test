@@ -7,7 +7,7 @@ const currenciesReducer = (state = initialState.currencies, action) => {
             return {
                 ...state,
                 all: action.payload,
-                selected: state.selected
+                selected: action.payload[0]
             }
         case actions.CURRENCIES_SELECT:
             return {

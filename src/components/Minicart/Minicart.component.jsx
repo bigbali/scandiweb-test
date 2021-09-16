@@ -17,8 +17,27 @@ class Minicart extends Component {
             isExpanded: false
         }
 
+        this.setWrapperRef = this.setWrapperRef.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
+        this.setExpanded = this.setExpanded.bind(this);
         this.toggleExpanded = this.toggleExpanded.bind(this);
         this.mapCartItemsToHtml = this.mapCartItemsToHtml.bind(this);
+    }
+
+    setExpanded(isExpanded) {
+        this.setState({
+            isExpanded: isExpanded
+        });
+    }
+
+    setWrapperRef(node) {
+        this.wrapperRef = node;
+    }
+
+    handleClickOutside(event) {
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+            this.setExpanded(false);
+        }
     }
 
     toggleExpanded() {
@@ -44,11 +63,21 @@ class Minicart extends Component {
         return mappedItems
     }
 
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
+
     render() {
         const counter = this.props.cart.counter;
 
         return (
-            <div className={`minicart-wrapper ${this.state.isExpanded ? "expanded" : ""}`}>
+            <div ref={this.setWrapperRef}
+                className={`minicart-wrapper ${this.state.isExpanded ? "expanded" : ""}`}>
                 <div className="minicart-relative">
                     {/* Putting these two in a wrapper would mess up the styling, so let's just duplicate 'onClick' */}
                     <img className="minicart-icon" src={CartIcon} alt="Minicart" onClick={this.toggleExpanded} />
@@ -73,7 +102,10 @@ class Minicart extends Component {
                         </div>
                         <div className="total-price">
                             <span>Total</span>
-                            <span>{getSelectedSymbol()}{getTotalPrice()}</span>
+                            <span>
+                                {getSelectedSymbol()}
+                                {getTotalPrice()}
+                            </span>
                         </div>
                         <div className="minicart-buttons-wrapper">
                             {/* This is done this strange way because if I put 'Button' in 'Link', the styling breaks */}

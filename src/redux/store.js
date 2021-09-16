@@ -7,11 +7,11 @@ let savedState = loadState();
 let state = initialState;
 
 // We save 'products' because 'getProductById()' will use it before it's gonna be set
-if (savedState) {
-    state.cart = savedState.cart;
-    state.products = savedState.products;
-    state.currencies = savedState.currencies;
-}
+// if (savedState) {
+//     state.cart = savedState.cart;
+//     state.products = savedState.products;
+//     state.currencies = savedState.currencies;
+// }
 
 const store = createStore(
     reducer,
