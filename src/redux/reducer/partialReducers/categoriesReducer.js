@@ -3,7 +3,8 @@ import * as actions from "../../actions/types";
 import initialState from "../../initialState";
 
 const categoriesReducer = (state = initialState.categories, action) => {
-    switch (action.type){
+    switch (action.type) {
+
         case actions.CATEGORIES_SET:
             const categoryNames = action.payload.map(category => {
                 return category.name

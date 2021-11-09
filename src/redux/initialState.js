@@ -1,6 +1,8 @@
+import { STATUS_OK } from "../globals/statuscodes";
+
 const initialState = {
     isLoading: true,
-    status: "OK",
+    status: STATUS_OK,
     products: {
         all: [],
         selected: null
@@ -9,7 +11,7 @@ const initialState = {
         all: [],
         selected: null
     },
-    currencies : {
+    currencies: {
         all: [],
         selected: null
     },

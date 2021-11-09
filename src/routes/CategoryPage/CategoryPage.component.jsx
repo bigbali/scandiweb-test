@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ErrorPage from '../ErrorPage';
+//import ErrorPage from '../MissingPage';
 import ProductCard from '../../components/ProductCard';
 import * as status from '../../globals/statuscodes';
 import './CategoryPage.style.scss';
@@ -9,32 +9,28 @@ import { fetchProducts } from '../../queries/queries';
 import devlog from '../../util/devlog';
 import { setErrorStatus } from '../../util/dataProcessor';
 import * as actionsTypes from '../../redux/actions/types';
+import MissingPage from '../MissingPage';
+import store from '../../redux/store';
+import actions from '../../redux/actions';
 
 class CategoryPage extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            category: null
+            products: null
         };
-
-        this.category = this.props.match.params.category;
     }
 
     fetchData = async () => {
-        const products = await fetchProducts(this.category)
-            .catch(error => {
-                setErrorStatus(actionsTypes.STATUS_API_OFFLINE)
-                devlog("haloalo")
-            })
-
-        return products
+        return await fetchProducts(this.props.match.params.category);
     }
 
     getProductCards = (category) => {
         return category.products.map(product => {
             return (
-                <ProductCard key={product.id}
+                <ProductCard
+                    key={product.id}
                     product={product}
                     className="product-card"
                 />
@@ -42,61 +38,55 @@ class CategoryPage extends PureComponent {
         })
     }
 
-
     componentDidMount() {
+        // Select category on initial load, because it makes life easier
+        // for CategorySelector component
+        this.props.selectCategory(this.props.match.params.category);
         this.fetchData().then(response => {
-            this.setState({
-                category: response.data.category
-            })
+            if (response) {
+                this.setState({
+                    products: response.data.category
+                })
+            }
         })
     }
 
     componentDidUpdate(prevProps, prevState) {
-        this.category = this.props.match.params.category;
-
-        // Check if selected category has changed, 
-        // and if so, fetch new data.
-        if (
-            prevProps.match.params.category
-            !== this.category
-        ) {
+        // If props have changed, refetch
+        // but only if requested category has changed (to prevent double fetching)
+        if (this.props.match.params.category !== prevProps.match.params.category) {
             this.fetchData().then(response => {
-                this.setState({
-                    category: response.data.category
-                });
-            });
+                if (response) {
+                    this.setState({
+                        products: response.data.category
+                    })
+                }
+            })
         }
     }
 
     render() {
-        const categoryData = this.state.category;
-
-        if (categoryData && this.props.status === "OK") {
+        if (this.state.products) {
             return (
                 <main className="category-page">
                     <h1>
-                        {this.category}
+                        {this.props.match.params.category}
                     </h1>
                     <div className="product-area">
-                        {this.getProductCards(categoryData)}
+                        {this.getProductCards(this.state.products)}
                     </div>
                 </main>
             )
         }
-        else if (this.props.status !== "OK") {
-            return <ErrorPage />
-        }
-        else {
-            return null
-        }
+
+        return <MissingPage />
     }
 }
 
-const mapStateToProps = (state) => {
+const mapDispatchToProps = () => {
     return {
-        categories: state.categories,
-        status: state.status
+        selectCategory: actions.selectCategory
     }
 }
 
-export default connect(mapStateToProps, null)(withRouter(CategoryPage))
+export default connect(null, mapDispatchToProps())(withRouter(CategoryPage))

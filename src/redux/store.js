@@ -1,9 +1,9 @@
 import { createStore } from "redux";
-import { loadState, saveState }   from "../util/localStorage";
-import initialState    from "./initialState";
-import reducer         from './reducer';
+import { loadState, saveState } from "../util/localStorage";
+import initialState from "./initialState";
+import reducer from './reducer';
 
-let savedState = loadState();
+// let savedState = loadState();
 let state = initialState;
 
 // We save 'products' because 'getProductById()' will use it before it's gonna be set
@@ -17,12 +17,12 @@ const store = createStore(
     reducer,
     state,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-    );
+);
 
 export default store;
 
-store.subscribe(() => {
-    saveState({
-        state: store.getState()
-    });
-});
+// store.subscribe(() => {
+//     saveState({
+//         state: store.getState()
+//     });
+// });

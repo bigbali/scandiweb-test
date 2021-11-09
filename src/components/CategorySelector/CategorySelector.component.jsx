@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
-import devlog from '../../util/devlog';
 import actions from './../../redux/actions';
 import './CategorySelector.style.scss';
 
@@ -9,26 +8,27 @@ class CategorySelector extends PureComponent {
     constructor(props) {
         super(props);
 
-        this.mapCategoriesToLinks = this.mapCategoriesToLinks.bind(this);
+        this.getCategories = this.getCategories.bind(this);
     }
 
-    mapCategoriesToLinks() {
-        // Keep-alive = keep selected if selected product has this category
-        const getIsKeepAlive = (category) => {
-            let isSelected = this.props.categories.selected === category;
-
-            return isSelected
-        }
-
+    getCategories() {
         return (
             this.props.categories.all.map((category, index) => {
                 return (
                     <li key={category}>
-                        <NavLink activeClassName="current-category"
-                            // className={`${getIsKeepAlive(category) ? "keep-alive" : ""}`}
+                        {/* 
+                            Selected category is stored in Redux store
+                            so this way we can persist styling on selected
+                            category when we select a product of that category 
+                        */}
+                        <NavLink
+                            className={category === this.props.categories.selected
+                                ? "current-category"
+                                : ""}
                             exact
                             to={category ? `/category/${category}` : ""}
                             onClick={() => {
+                                localStorage.setItem("persistedCategory", category);
                                 this.props.selectCategory(category)
                             }}>
                             {category.toUpperCase()}
@@ -39,21 +39,16 @@ class CategorySelector extends PureComponent {
         )
     }
 
-    componentDidMount() {
-        const currentCategory = this.props.match.params.category;
+    componentDidUpdate() {
+        // This is done in order to persist selected category
+        // if user selects a product, then reloads the page
+        const persistedCategory = localStorage.getItem("persistedCategory");
 
-        if (!this.props.categories.selected) {
-            this.props.selectCategory(currentCategory);
+        if (persistedCategory
+            && persistedCategory !== this.props.categories.selected) {
+            this.props.selectCategory(persistedCategory)
         }
     }
-
-    // componentDidUpdate() {
-    //     const currentCategory = this.props.match.params.category;
-
-    //     if (currentCategory !== this.props.categories.selected) {
-    //         this.props.selectCategory(currentCategory);
-    //     }
-    // }
 
     render() {
         return (
@@ -61,7 +56,7 @@ class CategorySelector extends PureComponent {
                 <ul className="category-selector">
                     {
                         this.props.categories
-                            ? this.mapCategoriesToLinks()
+                            ? this.getCategories()
                             : null
                     }
                 </ul>

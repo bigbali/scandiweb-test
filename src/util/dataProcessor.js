@@ -13,41 +13,41 @@ export const setErrorStatus = (status) => {
     store.dispatch(setStatus(status));
 }
 
-/**
- * Get all our data.
- * @async
- * @returns {Promise} Data fetched from GraphQL API.
- */
-export async function fetchData(){
-    const client = new ApolloClient({
-        uri: 'http://localhost:4000',
-        cache: new InMemoryCache()
-    });
-    
-    return client.query({
-        // Query string resides in queries.js, because it bothers my eyes with its presence.
-        query: gql (getAll)
-    })
-    .then(result => {
-        // If we get here, that means API request succeeded...
-        const data = result.data.category;
+// /**
+//  * Get all our data.
+//  * @async
+//  * @returns {Promise} Data fetched from GraphQL API.
+//  */
+// export async function fetchData(){
+//     const client = new ApolloClient({
+//         uri: 'http://localhost:4000',
+//         cache: new InMemoryCache()
+//     });
 
-        // ... but that doesn't mean our data is not empty, so here we check for that,
-        // and if we don't have data, then set the appropriate status.
-        if (data) {
-            return data;
-        }
-        else {
-            setErrorStatus(actions.STATUS_DATA_EMPTY);
-            devlog("API responded with empty data.", "error");
-        }
-    })
-    .catch(error => {
-        // If for any reason we get no response, set appropriate status.
-        setErrorStatus(actions.STATUS_API_OFFLINE);
-        devlog("API did not respond.", "error");
-    })
-}
+//     return client.query({
+//         // Query string resides in queries.js, because it bothers my eyes with its presence.
+//         query: gql (getAll)
+//     })
+//     .then(result => {
+//         // If we get here, that means API request succeeded...
+//         const data = result.data.category;
+
+//         // ... but that doesn't mean our data is not empty, so here we check for that,
+//         // and if we don't have data, then set the appropriate status.
+//         if (data) {
+//             return data;
+//         }
+//         else {
+//             setErrorStatus(actions.STATUS_DATA_EMPTY);
+//             devlog("API responded with empty data.", "error");
+//         }
+//     })
+//     .catch(error => {
+//         // If for any reason we get no response, set appropriate status.
+//         setErrorStatus(actions.STATUS_API_OFFLINE);
+//         devlog("API did not respond.", "error");
+//     })
+// }
 
 
 /**
@@ -63,18 +63,18 @@ export const extractCategories = (products) => {
     try {
         products.forEach(product => {
             let category = product.category;
-    
-            if (!categories.includes(category)){
+
+            if (!categories.includes(category)) {
                 categories.push(category);
             }
         });
     }
-    catch(error) {
+    catch (error) {
         // Check if for any reason we couldn't isolate categories from all products.
         setErrorStatus(actions.STATUS_DATA_CORRUPTED);
         devlog("Couldn't extract [categories]. Data is probably corrupted.", "error");
     }
-  
+
     return categories;
 }
 
@@ -88,19 +88,19 @@ export const extractCurrencies = (products) => {
 
     try {
         // It's a nested loop, and it's cute :)
-        products.forEach(product => {  
+        products.forEach(product => {
             let prices = product.prices;
-    
+
             prices.forEach(price => {
                 let currency = price.currency;
-    
-                if (!currencies.includes(currency)){
+
+                if (!currencies.includes(currency)) {
                     currencies.push(currency);
                 }
             })
         });
     }
-    catch(error) {
+    catch (error) {
         // Same as above...
         // If no products, then no currencies, then no 'currency selector'... then life is sad :(
         setErrorStatus(actions.STATUS_DATA_CORRUPTED);
@@ -129,7 +129,7 @@ export const getPriceInSelectedCurrency = (product, isJustNumber) => {
     });
 
     // Return just the number
-    if (isJustNumber){
+    if (isJustNumber) {
         return relevantPrice
     }
 
@@ -146,7 +146,7 @@ export const pairWithSymbol = (currency) => {
     const symbol = _GETSYMBOL_(currency);
 
     // If symbol matches currency, return only one of them, so we have 'USD' instead of 'USD USD'
-    if (symbol === currency){
+    if (symbol === currency) {
         return symbol
     }
 
@@ -193,7 +193,7 @@ const _GETSYMBOL_ = (currency) => {
 
     let symbol;
 
-    switch (currency.toUpperCase()){
+    switch (currency.toUpperCase()) {
         case "USD":
             symbol = "$";
             break;

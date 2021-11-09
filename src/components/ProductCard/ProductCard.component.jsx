@@ -10,18 +10,7 @@ class ProductCard extends Component {
     constructor(props) {
         super(props);
 
-        this.slugify = this.slugify.bind(this);
         this.isInStock = this.isInStock.bind(this);
-    }
-
-    // Create slug for URL
-    slugify(product) {
-        const slug = product.name
-            .toLowerCase()
-            .replace(/^\s+|\s+$/g, '')
-            .replace(/\s+/g, '-');
-
-        return slug;
     }
 
     isInStock(product) {
@@ -32,13 +21,16 @@ class ProductCard extends Component {
         const product = this.props.product;
 
         return (
-            // Get slugified href (for better UX) and select product on click to be used in product page
-            <Link to={`/product/${this.slugify(product)}`} className="product-card-wrapper-link" onClick={() => {
-                this.props.selectProduct(product)
-            }}>
-                <div className={`product-card ${this.isInStock(product) ? "" : "out-of-stock"}`}>
-                    <div className="product-card-image"
-                        style={{ backgroundImage: `url(${this.props.product.gallery[0]})` }}>
+            <Link to={`/product/${product.id}`} className="product-card-wrapper-link">
+                <div
+                    className={`product-card 
+                    ${product.inStock
+                            ? ""
+                            : "out-of-stock"
+                        }`}>
+                    <div
+                        className="product-card-image"
+                        style={{ backgroundImage: `url(${product.gallery[0]})` }}>
                         <div className="hover-cart-thing">
                             <img src={CartIcon} alt="Check out" />
                         </div>
