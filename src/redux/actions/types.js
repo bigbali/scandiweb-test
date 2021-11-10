@@ -30,4 +30,5 @@ export const CART_DECREMENT = "cart/decrement";
 export const STATUS_FAILED_TO_FETCH_CATEGORIES = "status/failed_to_fetch_categories";
 export const STATUS_FAILED_TO_FETCH_CURRENCIES = "status/failed_to_fetch_currencies";
 export const STATUS_FAILED_TO_FETCH_PRODUCTS = "status/failed_to_fetch_products";
+export const STATUS_FAILED_TO_FETCH_PRODUCT = "status/failed_to_fetch_product";
 

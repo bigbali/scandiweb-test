@@ -13,8 +13,8 @@ import ErrorOverlay from './components/ErrorOverlay';
 import Header from './components/Header';
 import * as status from './globals/statuscodes';
 import './styles/main.scss';
-import { fetchCategories, fetchCurrencies } from './queries/queries';
-import setErrorStatus from './util/errorHandlers/setErrorStatus';
+import { fetchCategories, fetchCurrencies } from './queries';
+import setErrorStatus from './util/setErrorStatus';
 import { STATUS_API_OFFLINE, STATUS_DATA_CORRUPTED } from './redux/actions/types';
 
 class App extends PureComponent {

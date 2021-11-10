@@ -1,5 +1,4 @@
 import ApolloClient, { InMemoryCache, gql } from 'apollo-boost';
-import { getAll } from '../queries/queries';
 import { setStatus } from './../redux/actions/actions';
 import devlog from './devlog';
 import store from '../redux/store';

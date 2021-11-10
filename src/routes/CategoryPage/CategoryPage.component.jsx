@@ -1,17 +1,11 @@
 import React, { PureComponent } from 'react'
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-//import ErrorPage from '../MissingPage';
-import ProductCard from '../../components/ProductCard';
-import * as status from '../../globals/statuscodes';
-import './CategoryPage.style.scss';
-import { fetchProducts } from '../../queries/queries';
-import devlog from '../../util/devlog';
-import { setErrorStatus } from '../../util/dataProcessor';
-import * as actionsTypes from '../../redux/actions/types';
-import MissingPage from '../MissingPage';
-import store from '../../redux/store';
+import { fetchProducts } from '../../queries';
 import actions from '../../redux/actions';
+import ProductCard from '../../components/ProductCard';
+import MissingPage from '../MissingPage';
+import './CategoryPage.style.scss';
 
 class CategoryPage extends PureComponent {
     constructor(props) {
@@ -20,10 +14,6 @@ class CategoryPage extends PureComponent {
         this.state = {
             products: null
         };
-    }
-
-    fetchData = async () => {
-        return await fetchProducts(this.props.match.params.category);
     }
 
     getProductCards = (category) => {
@@ -39,23 +29,28 @@ class CategoryPage extends PureComponent {
     }
 
     componentDidMount() {
-        // Select category on initial load, because it makes life easier
+        const category = this.props.match.params.category;
+
+        // Select category on load, because it makes life easier
         // for CategorySelector component
-        this.props.selectCategory(this.props.match.params.category);
-        this.fetchData().then(response => {
+        this.props.selectCategory(category);
+
+        fetchProducts(category).then(response => {
             if (response) {
                 this.setState({
                     products: response.data.category
                 })
             }
-        })
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
+        const category = this.props.match.params.category;
+
         // If props have changed, refetch
         // but only if requested category has changed (to prevent double fetching)
-        if (this.props.match.params.category !== prevProps.match.params.category) {
-            this.fetchData().then(response => {
+        if (category !== prevProps.match.params.category) {
+            fetchProducts(category).then(response => {
                 if (response) {
                     this.setState({
                         products: response.data.category

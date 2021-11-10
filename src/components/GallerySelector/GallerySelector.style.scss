@@ -8,6 +8,7 @@
     }
 
     .gallery-item {
+        position: relative;
         object-fit: cover;
         margin-bottom: 40px;
         width: 80px;
@@ -18,6 +19,15 @@
         &:hover {
             filter: brightness(0.7);
         }
+
+        &.fallback::after {
+            content: "No Image";
+            display: grid;
+            place-items: center;
+            position: absolute;
+            inset: 0;
+            background-color: rgb(245, 245, 245);
+        }
     }
 
     .thumbnail {
@@ -25,7 +35,7 @@
     }
 
     .thumbnail-wrapper {
-        // 610/1440*100, where 610 is the width of the image and 1440 is the width of the page.
+        // 610 / 1440 * 100, where 610 is the width of the image and 1440 is the width of the page.
         // In theory, this should be whatever percentage the image takes up from the page width
         width: 42.36vw;
 

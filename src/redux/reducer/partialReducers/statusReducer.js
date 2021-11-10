@@ -17,6 +17,8 @@ const statusReducer = (state = status.STATUS_OK, action) => {
             return status.STATUS_FAILED_TO_FETCH_CURRENCIES
         case actions.STATUS_FAILED_TO_FETCH_PRODUCTS:
             return status.STATUS_FAILED_TO_FETCH_PRODUCTS
+        case actions.STATUS_FAILED_TO_FETCH_PRODUCT:
+            return status.STATUS_FAILED_TO_FETCH_PRODUCT
         default:
             return state;
     }

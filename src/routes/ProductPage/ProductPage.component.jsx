@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import GallerySelector from '../../components/GallerySelector';
 import ProductActions from '../../components/ProductActions';
-import { fetchProductById } from '../../queries/queries';
+import { fetchProduct } from '../../queries';
 import actions from '../../redux/actions';
 import devlog from '../../util/devlog';
 import getProductById from '../../util/getProductById';
@@ -19,7 +19,7 @@ class ProductPage extends PureComponent {
     }
 
     fetchProduct = async () => {
-        fetchProductById(this.props.match.params.product)
+        fetchProduct(this.props.match.params.product)
             .then(response => {
                 if (response) {
                     this.setState({
