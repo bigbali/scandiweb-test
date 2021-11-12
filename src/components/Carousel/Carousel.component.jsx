@@ -50,14 +50,28 @@ export default class Carousel extends Component {
 
         return (
             <div className="carousel">
-                {/* The design implies you shouldn't see these if the background is white, so I won't work on that :| */}
-                <div className="carousel-action left" onClick={() => {
-                    this.changeCarouselImage("left")
-                }}></div>
-                <div className="carousel-action right" onClick={() => {
-                    this.changeCarouselImage("right")
-                }}></div>
-                <img src={gallery[this.state.currentIndex]} alt={altTitle} className="carousel-image" />
+                <div
+                    className={`carousel-action left 
+                        ${gallery.length > 1
+                            ? "expanded"
+                            : ""}`}
+                    onClick={() => {
+                        this.changeCarouselImage("left");
+                    }}>
+                </div>
+                <div
+                    className={`carousel-action right 
+                        ${gallery.length > 1
+                            ? "expanded"
+                            : ""}`}
+                    onClick={() => {
+                        this.changeCarouselImage("right");
+                    }}>
+                </div>
+                <img
+                    src={gallery[this.state.currentIndex]}
+                    alt={altTitle}
+                    className="carousel-image" />
             </div>
         )
     }
