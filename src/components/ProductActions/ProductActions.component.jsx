@@ -4,57 +4,57 @@ import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
 import { getInlineStyleModifier } from '../../util/mapVariationsHelper';
 import Button from '../Button/Button.component';
 import actions from '../../redux/actions'
-import getTitle from '../../util/getTitle';
-import getSubtitle from '../../util/getSubtitle';
 import './ProductActions.style.scss';
 
-class AttributeButton extends PureComponent {
+class Attributes extends PureComponent {
     render() {
-        const item = this.props.attributeItem;
         return (
-            <div
-                className="attribute-button"
-                //key={this.props.attributeItem.id}
-                // style={getInlineStyleModifier(attribute.type, item.value)}
-                // className={getClassListModifier(attribute, item)}
-                // aria-label={item.displayValue}
-                onClick={this.props.selectItem}
-            >
-                {item.displayValue}
+            <div className="attributes">
+                {   // Return a row for each attribute type,
+                    // each containing an array of buttons
+                    this.props.product.attributes.map((attribute, index) => {
+                        const selected = this.props.attributes[index].selected;
+
+                        const buttons = attribute.items.map(item => {
+                            return (
+                                <Button
+                                    key={item.id}
+                                    attributeItem={item}
+                                    aria-label={item.displayValue}
+                                    style={
+                                        attribute.type === "swatch"
+                                            ? { backgroundColor: item.value }
+                                            : null
+                                    }
+                                    className={`
+                                        ${selected === item
+                                            ? "selected"
+                                            : ""}
+                                        ${attribute.type}`}
+                                    onClick={() => {
+                                        this.props.selectItem(item, attribute);
+                                    }}
+                                >
+                                    {attribute.type === "text"
+                                        && item.displayValue}
+                                </Button>
+                            )
+                        })
+
+                        return (
+                            <div
+                                key={attribute.name}
+                                className="attribute-row">
+                                <div className="name">
+                                    {attribute.name}:
+                                </div>
+                                <div className="buttons">
+                                    {buttons}
+                                </div>
+                            </div>
+                        )
+                    })}
             </div>
-        )
-    }
-}
-
-class AttributeRows extends PureComponent {
-    render() {
-        return (
-            // Return a row for each attribute type,
-            // all of which contain an array of buttons
-            this.props.product.attributes.map(attribute => {
-                const buttons = attribute.items.map(item => {
-                    return (
-                        <AttributeButton
-                            key={item.id}
-                            attributeItem={item}
-                            selectItem={() => {
-                                this.props.selectItem(item, attribute);
-                            }}
-                        />
-                    )
-                })
-
-                return (
-                    <div className="attribute-row">
-                        <div className="title">
-                            {attribute.name}
-                        </div>
-                        <div className="buttons">
-                            {buttons}
-                        </div>
-                    </div>
-                )
-            })
         )
     }
 }
@@ -224,32 +224,38 @@ class ProductActions extends PureComponent {
         const product = this.props.product;
 
         return (
-            <div>
-                <h1 className="product-title semibold font-size-30">
-                    {getTitle(product.name)}
-                </h1>
-                <h2 className="product-subtitle regular font-size-30">
-                    {getSubtitle(product.name)}
-                </h2>
-                <div>
-                    <AttributeRows
-                        product={product}
-                        selectItem={this.selectItem}
-                    />
+            <div className="product-actions">
+                <div className="title">
+                    <h1 className="brand">
+                        {product.brand}
+                    </h1>
+                    <h2 className="name">
+                        {product.name}
+                    </h2>
                 </div>
-                <p className="product-price-label">
-                    Price:
-                </p>
-                <p className="product-price">
-                    {getPriceInSelectedCurrency(product)}
-                </p>
-                <Button className="fill"
+                <Attributes
+                    product={product}
+                    attributes={this.state.attributes}
+                    selectItem={this.selectItem}
+                />
+                <div className="price-wrapper">
+                    <div className="label">
+                        Price:
+                    </div>
+                    <div className="price">
+                        {getPriceInSelectedCurrency(product)}
+                    </div>
+                </div>
+                <div className="fill add-to-cart"
                 // onClick={() => this.addToCart(product.id)}
                 // disabled={this.isVariationAlreadyInCart()}
                 >
                     Add to cart
-                </Button>
-                <div className="product-description" dangerouslySetInnerHTML={{ __html: product.description }}></div>
+                </div>
+                <div
+                    className="product-description"
+                    dangerouslySetInnerHTML={{ __html: product.description }}>
+                </div>
             </div>
         )
     }

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import GallerySelector from '../../components/GallerySelector';
+import ProductGallery from '../../components/ProductGallery';
 import ProductActions from '../../components/ProductActions';
 import { fetchProduct } from '../../queries';
 import actions from '../../redux/actions';
@@ -48,7 +48,7 @@ class ProductPage extends PureComponent {
         if (this.state.product) {
             return (
                 <main className="product-page">
-                    <GallerySelector gallery={this.state.product.gallery} />
+                    <ProductGallery gallery={this.state.product.gallery} />
                     <ProductActions product={this.state.product} />
                 </main>
             )

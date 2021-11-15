@@ -20,6 +20,7 @@
     .currency-list {
         display: block;
         position: absolute;
+        z-index: 98;
         top: 65px;
         right: 6.3rem;
         background-color: var(--color-light-primary);

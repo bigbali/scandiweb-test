@@ -2,7 +2,10 @@ import { STATUS_OK } from "../globals/statuscodes";
 
 const initialState = {
     isLoading: true,
-    status: STATUS_OK,
+    status: {
+        status: STATUS_OK,
+        errorCount: 0
+    },
     products: {
         all: [],
         selected: null

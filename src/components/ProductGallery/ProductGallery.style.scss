@@ -1,5 +1,6 @@
-.gallery-wrapper {
+.product-gallery {
     display: flex;
+    margin-right: 6.3rem;
 
     .gallery-selector {
         display: flex;
@@ -31,15 +32,12 @@
     }
 
     .thumbnail {
-        width: 100%;
-    }
-
-    .thumbnail-wrapper {
         // 610 / 1440 * 100, where 610 is the width of the image and 1440 is the width of the page.
-        // In theory, this should be whatever percentage the image takes up from the page width
+        // In theory, this should be whatever percentage the image takes up from the page width.
         width: 42.36vw;
 
-        // Note: we are wrapping thumbnail only because setting width on IMG tag does not scale
-        // height to keep aspect ratio
+        img {
+            width: 100%;
+        }
     }
 }

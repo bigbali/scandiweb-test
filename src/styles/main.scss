@@ -3,14 +3,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
 
-// Wow, that's a lot of imports °-°
-
 :root {
     --color-light-primary: #{#ffffff};
     --color-light-secondary: #{#92abd1};
     --color-dark-primary: #{#1D1F22};
     --color-dark-secondary: #{#3f4855};
     --color-theme: #{#5ECE7B};
+
+    //max-width: 100%;
+    //min-height: 100vh;
+    position: relative;
 }
 
 * {
@@ -27,27 +29,20 @@ body {
 
 main {
     padding: 6.3rem;
-    height: 100%;
 }
 
 a {
     text-decoration: none;
 }
 
-button {
-    background-color: var(--color-light-primary);
-    border: 1px solid var(--color-dark-primary);
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 1rem;
-    cursor: pointer;
-}
-
-#root {
-    max-width: 100%;
-    min-height: 100vh;
-    position: relative;
-}
+// button {
+//     background-color: var(--color-light-primary);
+//     border: 1px solid var(--color-dark-primary);
+//     font-weight: 600;
+//     font-size: 1rem;
+//     padding: 1rem;
+//     cursor: pointer;
+// }
 
 .bold {
     font-weight: 600;

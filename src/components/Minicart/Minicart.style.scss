@@ -4,6 +4,7 @@
     &.expanded {
         .minicart-shade {
             opacity: 1;
+            pointer-events: all;
         }
 
         .minicart-window {
@@ -62,7 +63,7 @@
 
 .minicart-shade {
     position: absolute;
-    z-index: 98;
+    z-index: 97;
     left: 0;
     right: 0;
     top: 78px;
@@ -94,10 +95,6 @@
             margin-left: 0.4375rem
         }
     }
-}
-
-.button {
-    position: relative;
 }
 
 .minicart-is-empty {

@@ -1,35 +1,18 @@
 import React, { PureComponent } from 'react';
 import FallbackImage from '../../media/jpg/no-image.jpg';
-import './GallerySelector.style.scss';
+import './ProductGallery.style.scss';
 
-export default class GallerySelector extends PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            thumbnail: this.props.gallery[0]
-        }
-
-        this.getGalleryItems = this.getGalleryItems.bind(this);
-        this.changeThumbnail = this.changeThumbnail.bind(this);
-    }
-
-    changeThumbnail(url) {
-        this.setState({
-            thumbnail: url
-        })
-    }
-
-    getGalleryItems(gallery) {
+class GalleryImages extends PureComponent {
+    render() {
         return (
-            gallery.map((galleryItem, index) => {
+            this.props.gallery.map((galleryItem, index) => {
                 return (
                     <img
                         key={index}
                         src={galleryItem}
                         alt={`Gallery Item ${index}`}
                         className="gallery-item"
-                        onClick={() => this.changeThumbnail(galleryItem)}
+                        onClick={() => this.props.selectThumbnail(galleryItem)}
                         onError={(e) => { // When image fails to load, show fallback
                             e.target.src = FallbackImage;
                             e.target.classList.add("fallback");
@@ -39,18 +22,38 @@ export default class GallerySelector extends PureComponent {
             })
         )
     }
+}
+
+export default class ProductGallery extends PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            thumbnail: this.props.gallery[0]
+        }
+
+        this.selectThumbnail = this.selectThumbnail.bind(this);
+    }
+
+    selectThumbnail(url) {
+        this.setState({
+            thumbnail: url
+        })
+    }
 
     render() {
         return (
-            <section className="gallery-wrapper">
+            <section className="product-gallery">
                 <div className="gallery-selector">
-                    {this.getGalleryItems(this.props.gallery)}
+                    <GalleryImages
+                        gallery={this.props.gallery}
+                        selectThumbnail={this.selectThumbnail}
+                    />
                 </div>
-                <div className="thumbnail-wrapper">
+                <div className="thumbnail">
                     <img
                         src={this.state.thumbnail}
                         alt="Product Thumbnail"
-                        className="thumbnail"
                         onError={(e) => {
                             e.target.src = FallbackImage;
                         }}

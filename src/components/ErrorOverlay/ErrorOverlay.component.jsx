@@ -1,10 +1,9 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as status from '../../globals/statuscodes';
-import devlog from '../../util/devlog';
 import './ErrorOverlay.style.scss';
 
-class ErrorOverlay extends PureComponent {
+class ErrorOverlay extends Component {
     constructor(props) {
         super(props);
         this.getContent = this.getContent.bind(this);
@@ -28,16 +27,16 @@ class ErrorOverlay extends PureComponent {
                 description = "This means our data is unusable, therefore we can't process it.";
                 break
             case status.STATUS_FAILED_TO_FETCH_CATEGORIES:
-                message = "NO CATEGORIES";
-                description = "";
+                message = "We are deeply sorry, but it appears we have failed to fetch categories.";
+                description = "Please, try reloading the page!";
                 break
             case status.STATUS_FAILED_TO_FETCH_PRODUCTS:
-                message = "NO PRODUCTS";
-                description = "";
+                message = "We are deeply sorry, but it appears we have failed to fetch products.";
+                description = "Please, try reloading the page!";
                 break
             case status.STATUS_FAILED_TO_FETCH_CURRENCIES:
-                message = "NO CURRENCIES";
-                description = "";
+                message = "We are deeply sorry, but it appears we have failed to fetch currencies.";
+                description = "Please, try reloading the page!";
                 break
             default:
                 // In theory, this should never get triggered,
@@ -76,7 +75,7 @@ class ErrorOverlay extends PureComponent {
 
 const mapStateToProps = (state) => {
     return {
-        status: state.status
+        status: state.status.status
     }
 }
 

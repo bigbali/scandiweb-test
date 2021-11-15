@@ -3,11 +3,17 @@ import './Button.style.scss';
 
 export default class Button extends Component {
     render() {
-        const classAppendage = this.props.className;
-
         return (
-            <button className={`button ${classAppendage ? classAppendage : ""}`} style={this.props.style}
-                onClick={this.props.onClick} disabled={this.props.disabled}>
+            <button
+                className={`button 
+                    ${this.props.className
+                        ? this.props.className
+                        : ""
+                    }`}
+                style={this.props.style}
+                disabled={this.props.disabled}
+                onClick={this.props.onClick}
+            >
                 {this.props.children}
             </button>
         )
