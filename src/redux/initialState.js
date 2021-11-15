@@ -6,13 +6,9 @@ const initialState = {
         status: STATUS_OK,
         errorCount: 0
     },
-    products: {
-        all: [],
-        selected: null
-    },
     categories: {
-        all: [],
-        selected: null
+        all: ["all"],
+        selected: "all"
     },
     currencies: {
         all: [],

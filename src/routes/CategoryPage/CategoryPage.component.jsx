@@ -30,9 +30,6 @@ class CategoryPage extends PureComponent {
 
     componentDidMount() {
         const category = this.props.match.params.category;
-
-        // Select category on load, because it makes life easier
-        // for CategorySelector component
         this.props.selectCategory(category);
 
         fetchProducts(category).then(response => {
@@ -50,6 +47,7 @@ class CategoryPage extends PureComponent {
         // If props have changed, refetch
         // but only if requested category has changed (to prevent double fetching)
         if (category !== prevProps.match.params.category) {
+            this.props.selectCategory(category);
             fetchProducts(category).then(response => {
                 if (response) {
                     this.setState({

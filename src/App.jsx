@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { connect, batch } from 'react-redux';
-import store from './redux/store';
+import { fetchCategories, fetchCurrencies } from './queries';
 import actions from './redux/actions';
 import CategoryPage from './routes/CategoryPage';
 import ProductPage from './routes/ProductPage';
@@ -11,11 +11,7 @@ import MissingPage from './routes/MissingPage';
 import LoadingSpinner from './components/LoadingSpinner/';
 import ErrorOverlay from './components/ErrorOverlay';
 import Header from './components/Header';
-import * as status from './globals/statuscodes';
 import './styles/main.scss';
-import { fetchCategories, fetchCurrencies } from './queries';
-import setErrorStatus from './util/setErrorStatus';
-import { STATUS_API_OFFLINE, STATUS_DATA_CORRUPTED } from './redux/actions/types';
 
 class App extends PureComponent {
     initialize = async () => {
@@ -30,17 +26,6 @@ class App extends PureComponent {
             })
         }
         else { // When we had an error
-            // TODO: convert to compatible format
-            // // If no data of any kind could be fetched, API is
-            // // most likely offline
-            // const state = store.getState();
-
-            // if (state.status !== status.STATUS_OK
-            //     && !state.products
-            //     && !state.currencies
-            //     && !state.categories) {
-            //     setErrorStatus(STATUS_API_OFFLINE)
-            // }
             this.props.setIsLoading(false);
         }
     }

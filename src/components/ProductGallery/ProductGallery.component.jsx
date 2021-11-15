@@ -50,7 +50,10 @@ export default class ProductGallery extends PureComponent {
                         selectThumbnail={this.selectThumbnail}
                     />
                 </div>
-                <div className="thumbnail">
+                <div className={`thumbnail 
+                    ${!this.props.inStock
+                        ? "out-of-stock"
+                        : ""}`}>
                     <img
                         src={this.state.thumbnail}
                         alt="Product Thumbnail"

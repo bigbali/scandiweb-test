@@ -55,8 +55,6 @@ export const setCategories = (categories) => {
 }
 
 export const selectCategory = (category) => {
-    localStorage.setItem("persistedCategory", category);
-
     return {
         type: actions.CATEGORIES_SELECT,
         payload: category
@@ -81,12 +79,12 @@ export const selectCurrency = (currency) => {
 
 /*************** Cart ***************/
 
-export const cartAdd = (attributes, productId, productPrice) => {
+export const cartAdd = (product, attributes) => {
     return {
         type: actions.CART_ADD,
         payload: {
-            attributes,
-            productId
+            product,
+            attributes
         }
     }
 }

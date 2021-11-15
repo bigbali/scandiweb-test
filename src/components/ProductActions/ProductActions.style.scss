@@ -16,15 +16,8 @@
     }
 
     .attributes {
-        // display: grid;
-        // grid-template-columns: 1fr 1fr 1fr 1fr;
-        // grid-template-rows: auto;
-        // grid-gap: 12px;
         display: flex;
         flex-direction: column;
-        //flex-wrap: wrap;
-        // position: relative;
-        // width: max-content;
 
         .attribute-row {
             margin-bottom: 2.5rem;
@@ -37,14 +30,9 @@
             }
 
             .buttons {
-                // display: grid;
-                // grid-template-columns: repeat(auto-fill, minmax(3.9rem, 1fr));
-                gap: 0.75rem;
-                // max-width: 30vw;
-                // min-width: 10vw;
-
                 display: flex;
                 flex-wrap: wrap;
+                gap: 0.75rem;
                 width: 100%;
             }
         }
@@ -71,10 +59,11 @@
     .add-to-cart {
         display: grid;
         place-items: center;
-        position: absolute;
-        left: 0;
-        right: 0;
+        // position: absolute;
+        // left: 0;
+        // right: 0;
         min-width: max-content;
+        width: 100%;
         height: 3.25rem;
         background-color: var(--color-theme);
         color: var(--color-light-primary);
@@ -88,13 +77,19 @@
         &:hover {
             filter: brightness(0.9);
         }
+
+        &.out-of-stock {
+            opacity: 0.5;
+        }
     }
 
     .product-description {
-        position: absolute;
-        left: 0;
-        right: 0;
-        margin-top: 5.75rem; // Button height + 2.5 rem
+        // position: absolute;
+        // left: 0;
+        // right: 0;
+        max-width: 30rem;
+        //margin-top: 5.75rem; // Button height + 2.5 rem
+        margin-top: 2.5rem;
         font-family: "Roboto";
         font-size: 1rem;
 
@@ -103,14 +98,6 @@
         }
     }
 }
-
-// @media (max-width: 1024px) {
-//     .attribute-row {
-//         .buttons {
-//             grid-template-columns: repeat(auto, minmax(3.9rem, 1fr));
-//         }
-//     }
-// }
 
 @media screen and (min-width: 1024px) {
     .product-page {
@@ -121,64 +108,3 @@
         min-width: 15rem;
     }
 }
-
-// @media (min-width: 1512px) {
-//     .attribute-row {
-//         .buttons {
-//             grid-template-columns: repeat(5, minmax(3.9rem, 1fr));
-//         }
-//     }
-// }
-
-
-
-// .attribute-name {
-//     font-family: "Roboto Condensed";
-//     font-size: 18px;
-//     margin: 0;
-//     margin-top: 43px;
-//     margin-bottom: 0.5rem;
-//     text-transform: uppercase;
-// }
-
-// .attribute-button {
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     height: 3rem;
-//     min-width: 4rem;
-//     border: 1px solid var(--color-dark-primary);
-//     background-color: white;
-//     font-family: "Source Sans Pro";
-//     font-size: 1rem;
-//     transition: filter 0.1s;
-//     cursor: pointer;
-//     user-select: none;
-
-//     &:hover {
-//         filter: brightness(0.7);
-//     }
-
-//     &.invert-color {
-//         color: var(--color-light-primary);
-//     }
-
-//     &.selected {
-//         &.text {
-//             color: var(--color-light-primary);
-//             // We use '!important' because we want to override inline style which sets background color
-//             background-color: var(--color-dark-primary) !important;
-//         }
-
-//         &.swatch {
-//             // Why use an outline? Because we don't want to change the swatch color, even when selected.
-//             // And yet... we somehow need to tell the user what is selected.
-//             outline: 3px solid var(--color-theme);
-//         }
-//     }
-// }
-
-// Button component doesn't have width set, so we set it here
-// .button {
-//     width: 100%;
-// }

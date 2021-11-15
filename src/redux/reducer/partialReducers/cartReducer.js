@@ -1,119 +1,45 @@
-import getVariationAttributesWithoutType from "../../../util/getVariationAttributesWithoutType";
 import initialState from "../../initialState";
 import * as actions from "../../actions/types";
 
 const cartReducer = (state = initialState.cart, action) => {
-    // Will be assigned later on, if we have the data in payload
-    let productId;
-    let productVariation;
-
-    // This is called 'lazy solution to making sure react-redux causes re-renders
-    // instead of headaches' (which means, return a new object every single time, even
-    // when there is no need to)
-    state = {...state}
-
-    const createOrAppendVariations = (product, variation) => {
-        // Check if product is already in cart
-        if (product){
-            // We'll use this to check if variation already exists
-            let variationExists = false;
-
-            product.variations.forEach(existingVariation => {
-                // Check if variation already exists in cart
-                if (JSON.stringify(variation) === JSON.stringify(existingVariation)){
-                    variationExists = true;
-                }
-            })
-
-            if (!variationExists){
-                state.counter++;
-                return [
-                    ...product.variations,
-                    variation
-                ]
-            } 
-
-            // We can't return null because that would delete our variations
-            // ... so we return the variations themselves.
-            else {
-                return [...product.variations]
-            }
-        }
-        else {
-            state.counter++;
-            return [
-                variation
-            ]
-        }
-    }
-
     switch (action.type) {
         case actions.CART_ADD:
-            let variation = {
-                quantity: 1
-            };
+            let cart = { ...state };
 
-            // Assign attribute key/value pairs to 'variation'.
-            Object.entries(action.payload.attributes).forEach(attribute => {
-                variation = {
-                    ...variation,
-                    [attribute[0]]: attribute[1]
-                }
-            });
-            
-            return {
+            cart = {
+                counter: ++state.counter,
                 products: {
                     ...state.products,
-                    [action.payload.productId]: {
-                        variations: createOrAppendVariations(state.products[action.payload.productId], variation)
-                    },
-                },
-                counter: state.counter,
+                    [action.payload.product.id]: {
+                        ...action.payload.product,
+                        attributes: [
+                            ...action.payload.attributes,
+                        ],
+                        count: 1
+                    }
+                }
             }
 
-        case actions.CART_INCREMENT:
-            productId = action.payload.productId;
-            productVariation = action.payload.productVariation;
-            
-            state.products[productId].variations.forEach((variation, index) => {
-                if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
-                    state.products[productId].variations[index].quantity++;
-                    state.counter++;
-                }
-            })
-            
-            return state
-            
-        case actions.CART_DECREMENT:
-            productId = action.payload.productId;
-            productVariation = action.payload.productVariation;               
-            let stateProductVariations = state.products[productId].variations;
-            
-            stateProductVariations.forEach((variation, index) => {
-                if (JSON.stringify(getVariationAttributesWithoutType(variation.attributes)) === JSON.stringify(productVariation)){
-                    state.counter--;
+            // let match = false;
+            // state.products.forEach((cartItem, index) => {
+            //     if (cartItem.id === action.payload.product.id) {
+            //         match = true;
+            //         // if (JSON.stringify({ ...cartItem.attributes }) === JSON.stringify({ ...action.payload.attributes })) {
+            //         //     console.log("MATCH")
+            //         //     state.products[index].count++;
+            //         //     returnValue = state;
+            //         // }
+            //         cartItem.attributes.forEach((attribute, index) => {
+            //             console.log(attribute.selected)
+            //             console.log(action.payload.attributes[index].selected)
+            //         })
+            //         // console.log(cartItem.attributes)
+            //         // console.log(action.payload.attributes)
 
-                    if (stateProductVariations[index].quantity > 1) {
-                        stateProductVariations[index].quantity--;
-                    }
-                    // If quantity is less than 1, remove variation altogether
-                    else {
-                        // Get rid of variation from array
-                        stateProductVariations.splice(index, 1);
+            //     }
+            // })
 
-                        // If product has no more variations, remove product from cart
-                        if (stateProductVariations.length === 0){
-                            delete state.products[productId];
-                        }
-                    }
-                }
-            })
-            
-            return state
-            
-        case actions.CART_REMOVE:
-            //console.log("rem")
-            return "Here's an error for you, for trying to use an unimplemented feature! (Unimplemented, because unneeded, apparently)"
+            return cart
 
         default:
             //console.log("def")

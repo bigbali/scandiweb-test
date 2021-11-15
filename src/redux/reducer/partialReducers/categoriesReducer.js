@@ -13,7 +13,7 @@ const categoriesReducer = (state = initialState.categories, action) => {
                     "all",
                     ...categoryNames
                 ],
-                selected: "all"
+                selected: state.selected
             }
         case actions.CATEGORIES_SELECT:
             return {

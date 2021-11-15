@@ -35,9 +35,34 @@
         // 610 / 1440 * 100, where 610 is the width of the image and 1440 is the width of the page.
         // In theory, this should be whatever percentage the image takes up from the page width.
         width: 42.36vw;
+        max-height: 75vh;
+        position: relative;
+        display: grid;
+        place-items: center;
 
         img {
             width: 100%;
+        }
+
+        &.out-of-stock {
+            img {
+                opacity: 0.5;
+            }
+
+            &::before {
+                content: "OUT OF STOCK";
+                position: absolute;
+                z-index: 97;
+                left: 0;
+                right: 0;
+                //top: 0;
+                display: grid;
+                place-items: center;
+                padding: 2rem;
+                background-color: rgba(255, 255, 255, 0.5);
+                font-size: 2rem;
+            }
+
         }
     }
 }

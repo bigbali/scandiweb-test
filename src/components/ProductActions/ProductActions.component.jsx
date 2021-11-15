@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
-import { getInlineStyleModifier } from '../../util/mapVariationsHelper';
 import Button from '../Button/Button.component';
 import actions from '../../redux/actions'
 import './ProductActions.style.scss';
@@ -116,87 +115,6 @@ class ProductActions extends PureComponent {
         })
     }
 
-    // mapAttributesToHtml(attributes) {
-    //     // Determine class string for attribute value selector buttons
-    //     const getClassListModifier = (attribute, attrItem) => {
-    //         const value = attrItem.value;
-    //         const stateAttributeEntry = this.state.attributes[attribute.id.toLowerCase()];
-    //         let classListModifier = "attribute-item";
-
-    //         // Differentiate between swatch and text items
-    //         if (attribute.type === "swatch") {
-    //             classListModifier += " swatch";
-
-    //             if (getBrightness(value) < 100) {
-    //                 classListModifier += " invert-color";
-    //             }
-    //         }
-    //         else {
-    //             classListModifier += " text";
-    //         }
-
-    //         // Check if value of this attribute is already added to state, 
-    //         // and if so, mark as selected.
-    //         // Must check if there is 'stateAttributeEntry' because on initial render it won't be set,
-    //         // and I wouldn't want to greet users with an error because I tried to access a property of 'undefined'.
-    //         if (stateAttributeEntry) {
-    //             if (value === stateAttributeEntry.value) {
-    //                 classListModifier += " selected";
-    //             }
-    //         }
-
-    //         return classListModifier
-    //     }
-
-    //     // Iterate through each attribute and create appropriate attribute item buttons
-    //     // (for example, shoe size selector buttons)
-    //     const mappedAttributes = attributes.map((attribute, attrIndex) => {
-
-    //         // Map the items inside the attribute
-    //         const attributeItems = attribute.items.map((item, itemIndex) => {
-
-    //             // Add first items to 'initialSelection'
-    //             if (itemIndex === 0) {
-    //                 this.addToInitialSelection(attribute, item, attrIndex);
-    //             }
-
-    //             // We want to stop here if we don't yet have state set
-    //             // (so we don't try to access unset state)
-    //             if (!this.state) return null;
-
-    //             return (
-    //                 <div
-    //                     key={itemIndex}
-    //                     style={getInlineStyleModifier(attribute.type, item.value)}
-    //                     className={getClassListModifier(attribute, item)}
-    //                     aria-label={item.displayValue}
-    //                     onClick={() => this.selectAttributeItem(attribute, item)}>
-    //                     {item.displayValue}
-    //                 </div>
-    //             )
-    //         });
-
-    //         return (
-    //             <div key={attrIndex} className="attribute-wrapper">
-    //                 <p className="attribute-name">
-    //                     {attribute.name}:
-    //                 </p>
-    //                 <div className="attribute-items-wrapper">
-    //                     {attributeItems}
-    //                 </div>
-    //             </div>
-    //         )
-    //         /*
-    //         */
-    //     })
-
-    //     return (
-    //         <div className="attributes-wrapper">
-    //             {mappedAttributes}
-    //         </div>
-    //     )
-    // }
-
     // Set initial selection
     static getDerivedStateFromProps(nextProps, prevState) {
         // If not first render, abort
@@ -246,11 +164,22 @@ class ProductActions extends PureComponent {
                         {getPriceInSelectedCurrency(product)}
                     </div>
                 </div>
-                <div className="fill add-to-cart"
-                // onClick={() => this.addToCart(product.id)}
-                // disabled={this.isVariationAlreadyInCart()}
+                <div
+                    className={`add-to-cart
+                        ${!product.inStock
+                            ? "out-of-stock"
+                            : ""}`}
+                    onClick={() => {
+                        if (product.inStock) {
+                            this.props.addToCart(product, this.state.attributes)
+                        }
+                    }}
                 >
-                    Add to cart
+                    {
+                        product.inStock
+                            ? "ADD TO CART"
+                            : "OUT OF STOCK"
+                    }
                 </div>
                 <div
                     className="product-description"
@@ -264,13 +193,12 @@ class ProductActions extends PureComponent {
 const mapStateToProps = (state) => {
     return {
         currencies: state.currencies,
-        // cart: state.cart,
     }
 }
 
 const mapDispatchToProps = () => {
     return {
-        dispatchAddToCart: actions.cartAdd
+        addToCart: actions.cartAdd
     }
 }
 

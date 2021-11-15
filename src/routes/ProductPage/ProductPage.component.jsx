@@ -1,11 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import ProductGallery from '../../components/ProductGallery';
-import ProductActions from '../../components/ProductActions';
 import { fetchProduct } from '../../queries';
 import actions from '../../redux/actions';
-import devlog from '../../util/devlog';
-import getProductById from '../../util/getProductById';
+import ProductGallery from '../../components/ProductGallery';
+import ProductActions from '../../components/ProductActions';
 import MissingPage from '../MissingPage';
 import './ProductPage.style.scss';
 
@@ -18,19 +16,14 @@ class ProductPage extends PureComponent {
         }
     }
 
-    fetchProduct = async () => {
-        fetchProduct(this.props.match.params.product)
-            .then(response => {
-                if (response) {
-                    this.setState({
-                        product: response.data.product
-                    })
-                }
-            });
-    }
-
     componentDidMount() {
-        this.fetchProduct();
+        fetchProduct(this.props.match.params.product).then(response => {
+            if (response) {
+                this.setState({
+                    product: response.data.product
+                })
+            }
+        });;
     }
 
     componentDidUpdate() {
@@ -48,7 +41,9 @@ class ProductPage extends PureComponent {
         if (this.state.product) {
             return (
                 <main className="product-page">
-                    <ProductGallery gallery={this.state.product.gallery} />
+                    <ProductGallery
+                        gallery={this.state.product.gallery}
+                        inStock={this.state.product.inStock} />
                     <ProductActions product={this.state.product} />
                 </main>
             )
@@ -58,11 +53,6 @@ class ProductPage extends PureComponent {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        products: state.products
-    }
-}
 
 const mapDispatchToProps = () => {
     return {
@@ -70,4 +60,4 @@ const mapDispatchToProps = () => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps())(ProductPage);
+export default connect(null, mapDispatchToProps())(ProductPage);

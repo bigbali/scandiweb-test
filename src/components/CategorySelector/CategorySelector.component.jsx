@@ -27,27 +27,13 @@ class CategorySelector extends PureComponent {
                                 : ""}
                             exact
                             to={category ? `/category/${category}` : ""}
-                            onClick={() => {
-                                localStorage.setItem("persistedCategory", category);
-                                this.props.selectCategory(category)
-                            }}>
+                        >
                             {category.toUpperCase()}
                         </NavLink>
                     </li>
                 )
             })
         )
-    }
-
-    componentDidUpdate() {
-        // This is done in order to persist selected category
-        // if user selects a product, then reloads the page
-        const persistedCategory = localStorage.getItem("persistedCategory");
-
-        if (persistedCategory
-            && persistedCategory !== this.props.categories.selected) {
-            this.props.selectCategory(persistedCategory)
-        }
     }
 
     render() {

@@ -74,6 +74,7 @@ class Minicart extends Component {
 
     render() {
         const counter = this.props.cart.counter;
+        return null
 
         return (
             <div ref={this.setWrapperRef}
