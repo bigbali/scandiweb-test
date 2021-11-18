@@ -1,6 +1,17 @@
 .product-actions {
     position: relative;
 
+    &.out-of-stock {
+
+        .add-to-cart,
+        .button {
+            opacity: 0.5;
+            cursor: default;
+            filter: none;
+            pointer-events: none; // Disable clicking
+        }
+    }
+
     .title {
         margin-bottom: 3rem;
 
@@ -76,10 +87,6 @@
 
         &:hover {
             filter: brightness(0.9);
-        }
-
-        &.out-of-stock {
-            opacity: 0.5;
         }
     }
 

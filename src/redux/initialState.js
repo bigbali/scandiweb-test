@@ -12,11 +12,12 @@ const initialState = {
     },
     currencies: {
         all: [],
-        selected: null
+        selected: ""
     },
     cart: {
-        products: [],
-        counter: 0
+        products: {},
+        counter: 0,
+        total: []
     }
 }
 

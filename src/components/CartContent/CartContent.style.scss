@@ -1,0 +1,52 @@
+.cart-content {
+    .button {
+        min-width: 1.5rem;
+        height: 1.5rem;
+        font-family: "Source Sans Pro";
+        font-size: 0.875rem;
+    }
+
+    .cart-item {
+        display: flex;
+        flex-direction: column;
+
+        .attribute-row {
+            margin-bottom: 2.5rem;
+
+            .name {
+                margin-bottom: 0.5rem;
+                font-weight: 700;
+                font-size: 1.125rem;
+                text-transform: uppercase;
+            }
+
+            .buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                width: 100%;
+
+                .button {
+                    background-color: var(--color-light-primary);
+                    color: var(--color-dark-primary);
+
+                    &:not(.selected) {
+                        background-color: rgba(166, 166, 166, 0.2);
+                        color: #A6A6A6;
+                        border-color: #A6A6A6;
+
+                        &.swatch {
+                            background-color: inherit;
+                        }
+                    }
+                }
+            }
+        }
+
+        .quantity-actions .button {
+            padding: 0;
+            font-size: 1.5rem;
+            line-height: 0; // To force browser to not push down
+        }
+    }
+}

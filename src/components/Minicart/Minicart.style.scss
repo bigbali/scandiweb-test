@@ -1,17 +1,10 @@
 .minicart-wrapper {
     margin-left: 1rem;
 
-    &.expanded {
-        .minicart-shade {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .minicart-window {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: all;
-        }
+    &.expanded .minicart-window {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
     }
 }
 
@@ -61,7 +54,7 @@
     transition-timing-function: ease-out;
 }
 
-.minicart-shade {
+.shade {
     position: absolute;
     z-index: 97;
     left: 0;
@@ -72,6 +65,11 @@
     background-color: #39374838;
     opacity: 0;
     transition: opacity 0.2s;
+
+    &.expanded {
+        opacity: 1;
+        pointer-events: all;
+    }
 }
 
 .my-bag {
@@ -116,7 +114,7 @@
 .minicart-items-wrapper {
     width: 100%;
     height: calc(100% - 8rem);
-    overflow-y: scroll;
+    overflow: auto;
 }
 
 .total-price {
