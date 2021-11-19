@@ -76,22 +76,17 @@
     margin: 0;
 }
 
-.minicart-buttons-wrapper {
-    display: flex;
-    justify-content: space-between;
+.minicart-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.81rem;
     position: absolute;
     bottom: 1.25rem;
     left: 0.875rem;
     right: 0.875rem;
 
     .button {
-        &:first-of-type {
-            margin-right: 0.4375rem
-        }
-
-        &:last-of-type {
-            margin-left: 0.4375rem
-        }
+        width: 100%;
     }
 }
 
@@ -100,10 +95,8 @@
     justify-content: center;
     align-items: center;
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    inset: 0;
+    margin-top: -5rem;
     pointer-events: none;
 
     &.totally-empty {

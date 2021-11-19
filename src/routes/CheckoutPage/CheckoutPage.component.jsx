@@ -4,12 +4,16 @@ import './CheckoutPage.style.scss';
 export default class CheckoutPage extends PureComponent {
     render() {
         return (
-            <div className="checkout-page">
-                <h1>
-                    Welcome to checkout page. This is not in the design spec,
-                    so I exist just because if I didn't, a button in 'Minicart' would do nothing.
-                </h1>
-            </div>
+            <main className="checkout-page">
+                <div>
+                    <h1>
+                        Check this out!
+                    </h1>
+                    <h2>
+                        This is the checkout page.
+                    </h2>
+                </div>
+            </main>
         )
     }
 }

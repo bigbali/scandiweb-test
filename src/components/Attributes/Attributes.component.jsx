@@ -18,9 +18,6 @@ export default class Attributes extends PureComponent {
                                     key={item.id}
                                     attributeItem={item}
                                     aria-label={item.displayValue}
-                                    // In cart and in ProductActions, we want different styling
-                                    // and there is little support for CSS attr() solution,
-                                    // so here we are. 
                                     // 33 is hexadecimal for decimal 20 => 20% opacity
                                     style={attribute.type === "swatch"
                                         ? {
@@ -38,7 +35,9 @@ export default class Attributes extends PureComponent {
                                             : ""}
                                         ${attribute.type}`}
                                     onClick={() => {
-                                        this.props.selectItem(item, attribute);
+                                        if (this.props.isProductAction) {
+                                            this.props.selectItem(item, attribute);
+                                        } // Don't need item selection in cart
                                     }}
                                 >
                                     {attribute.type === "text"

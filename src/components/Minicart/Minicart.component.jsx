@@ -115,27 +115,22 @@ class Minicart extends Component {
                                     {getPrice(this.props.total)}
                                 </span>
                             </div>
-                            <div className="minicart-buttons-wrapper">
-                                <Button
-                                    className="font-size-14"
-                                    onClick={this.toggleExpanded}
-                                >
-                                    View Bag
-                                    <Link
-                                        to="/cart"
-                                        className="fill-entirely"
-                                    />
-                                </Button>
-                                <Button
-                                    className="fill"
-                                    onClick={this.toggleExpanded}
-                                >
-                                    Checkout
-                                    <Link
-                                        to="/checkout"
-                                        className="fill-entirely"
-                                    />
-                                </Button>
+                            <div className="minicart-actions">
+                                <Link to="cart">
+                                    <Button
+                                        onClick={this.toggleExpanded}
+                                    >
+                                        View Bag
+                                    </Button>
+                                </Link>
+                                <a href="/checkout">
+                                    <Button
+                                        className="fill"
+                                        onClick={this.toggleExpanded}
+                                    >
+                                        Checkout
+                                    </Button>
+                                </a>
                             </div>
                         </div>
                     </div>

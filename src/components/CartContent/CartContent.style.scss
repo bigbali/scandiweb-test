@@ -7,11 +7,47 @@
     }
 
     .cart-item {
+        margin-top: 1.4rem;
         display: flex;
-        flex-direction: column;
+        gap: 10px;
+        position: relative;
+
+
+        .left {
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+
+            p {
+                margin: 0;
+                line-height: 1.6rem;
+                font-weight: 300;
+
+                &.price {
+                    margin-top: 0.5rem;
+                    font-weight: 500;
+                }
+            }
+
+            .attributes {
+                margin-top: 2rem;
+            }
+        }
+
+        .right {
+            width: 40%;
+
+            img {
+                width: 100%;
+            }
+        }
 
         .attribute-row {
-            margin-bottom: 2.5rem;
+            margin-bottom: 0.75rem;
+
+            &:last-of-type {
+                margin-bottom: 2.5rem;
+            }
 
             .name {
                 margin-bottom: 0.5rem;
@@ -29,6 +65,10 @@
                 .button {
                     background-color: var(--color-light-primary);
                     color: var(--color-dark-primary);
+                    filter: none;
+                    cursor: default !important;
+                    pointer-events: none !important;
+
 
                     &:not(.selected) {
                         background-color: rgba(166, 166, 166, 0.2);
@@ -37,6 +77,14 @@
 
                         &.swatch {
                             background-color: inherit;
+                        }
+                    }
+
+                    &.swatch {
+                        width: 1.5rem;
+
+                        &.selected {
+                            outline: none;
                         }
                     }
                 }

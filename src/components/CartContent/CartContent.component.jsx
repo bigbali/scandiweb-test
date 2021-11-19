@@ -11,34 +11,38 @@ class CartItem extends Component {
 
         return (
             <div className="cart-item">
-                <p className="brand">
-                    {product.brand}
-                </p>
-                <p className="name">
-                    {product.name}
-                </p>
-                <p className="price">
-                    {getPrice(product.prices)}
-                </p>
-                <Attributes
-                    product={product}
-                    attributes={variation.attributes}
-                />
-                <div className="quantity-actions">
-                    <Button>
-                        +
-                    </Button>
-                    <span>
-                        {variation.quantity}
-                    </span>
-                    <Button>
-                        -
-                    </Button>
+                <div className="left">
+                    <p className="brand">
+                        {product.brand}
+                    </p>
+                    <p className="name">
+                        {product.name}
+                    </p>
+                    <p className="price">
+                        {getPrice(product.prices)}
+                    </p>
+                    <Attributes
+                        product={product}
+                        attributes={variation.attributes}
+                    />
+                    <div className="quantity-actions">
+                        <Button>
+                            +
+                        </Button>
+                        <span>
+                            {variation.quantity}
+                        </span>
+                        <Button>
+                            -
+                        </Button>
+                    </div>
                 </div>
-                <img
-                    src={product.gallery[0]}
-                    alt={product.name}
-                />
+                <div className="right">
+                    <img
+                        src={product.gallery[0]}
+                        alt={product.name}
+                    />
+                </div>
             </div>
         )
     }

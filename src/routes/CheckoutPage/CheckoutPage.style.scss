@@ -1,10 +1,15 @@
 .checkout-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;
+    display: grid;
+    place-items: center;
+    height: 70vh;
 
-    h1 {
-        width: 80%;
+    div {
+        position: relative;
+        margin-left: -10rem;
+    }
+
+    h1,
+    h2 {
+        margin: 0.5rem;
     }
 }
