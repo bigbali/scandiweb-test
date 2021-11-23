@@ -11,7 +11,7 @@ export default class Attributes extends PureComponent {
     getContent() {
         // Return a row for each attribute type,
         // each containing an array of buttons
-        this.props.product.attributes.map((attribute, index) => {
+        return this.props.product.attributes.map((attribute, index) => {
             const selected = this.props.attributes[index].selected;
 
             const buttons = attribute.items.map(item => {
@@ -75,7 +75,6 @@ export default class Attributes extends PureComponent {
                 </div>
             )
         })
-
     }
 
     render() {

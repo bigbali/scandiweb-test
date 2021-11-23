@@ -34,6 +34,7 @@ export const fetchProduct = async (productId) => {
                 }`
             )
         })
+
     } catch {
         setErrorStatus(actions.STATUS_FAILED_TO_FETCH_PRODUCT)
     }
