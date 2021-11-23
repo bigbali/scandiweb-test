@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getSelectedSymbol } from '../../util/dataProcessor';
+import getPrice from '../../util/getPrice';
 import CartIcon from '../../media/svg/cart.svg';
 import Button from '../Button';
 import CartContent from '../CartContent';
-import MinicartItem from '../MinicartItem';
-import getTotalPrice from '../../util/getTotalPrice';
 import './Minicart.style.scss';
-import getPrice from '../../util/getPrice';
 
 class Minicart extends Component {
     constructor(props) {
@@ -25,12 +22,12 @@ class Minicart extends Component {
     }
 
     setWrapperRef(node) {
-        console.log("ref")
         this.wrapperRef = node;
     }
 
     handleClickOutside(event) {
-        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+        if (this.wrapperRef
+            && !this.wrapperRef.contains(event.target)) {
             this.setExpanded(false);
         }
     }
@@ -75,13 +72,12 @@ class Minicart extends Component {
                             onClick={this.toggleExpanded}
                         />
                         <span
+                            onClick={this.toggleExpanded}
                             className={`minicart-counter 
                             ${counter < 1
                                     ? "hidden"
                                     : ""}`}
-                            onClick={this.toggleExpanded}>
-                            {/* If counter is zero, just hide it, because we want it to still take up space
-                            (so cart icon doesn't move to right when counter isn't visible) */}
+                        >
                             {counter}
                         </span>
                         <div className="minicart-window">
@@ -106,7 +102,7 @@ class Minicart extends Component {
                                 </div>
                                 <CartContent
                                     products={this.props.products}
-                                    className="minicart"
+                                    className="in-minicart"
                                 />
                             </div>
                             <div className="total-price">
@@ -116,8 +112,9 @@ class Minicart extends Component {
                                 </span>
                             </div>
                             <div className="minicart-actions">
-                                <Link to="cart">
+                                <Link to="/cart">
                                     <Button
+                                        className="bold"
                                         onClick={this.toggleExpanded}
                                     >
                                         View Bag

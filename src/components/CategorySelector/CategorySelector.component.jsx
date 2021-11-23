@@ -41,7 +41,8 @@ class CategorySelector extends PureComponent {
             <div className="category-selector-wrapper">
                 <ul className="category-selector">
                     {
-                        this.props.categories
+                        // Check if we have categories. 'all' category included by default.
+                        this.props.categories.all.length > 1
                             ? this.getCategories()
                             : null
                     }
@@ -63,4 +64,5 @@ const mapDispatchToProps = () => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps())(withRouter(CategorySelector));
+export default connect(mapStateToProps, mapDispatchToProps())
+    (withRouter(CategorySelector));

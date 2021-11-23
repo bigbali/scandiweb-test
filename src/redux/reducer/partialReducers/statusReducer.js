@@ -1,14 +1,19 @@
 import * as actions from "../../actions/types";
-import * as status from '../../../globals/statuscodes';
+import * as status from '../../statuscodes';
 import initialState from "../../initialState";
 
 const statusReducer = (state = initialState.status, action) => {
+    state = { ...state }; // Prevent modifying initialState
+
     const setStatus = (status) => {
         state.status = status;
         state.errorCount++;
-
-        console.log(state)
         return state
+    }
+
+    if (action.type === "reset"
+        || action.type === actions.STATUS_OK) {
+        return initialState.status
     }
 
     if (state.status === status.STATUS_API_OFFLINE) {
@@ -23,8 +28,6 @@ const statusReducer = (state = initialState.status, action) => {
     }
 
     switch (action.type) {
-        case actions.STATUS_OK:
-            return setStatus(status.STATUS_OK)
         case actions.STATUS_API_OFFLINE:
             return setStatus(status.STATUS_API_OFFLINE)
         case actions.STATUS_DATA_EMPTY:

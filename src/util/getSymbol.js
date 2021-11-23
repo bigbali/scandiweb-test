@@ -1,3 +1,8 @@
+/**
+ * Get symbol of currency.
+ * @param {string} currency
+ * @returns {string} matched symbol
+ */
 const getSymbol = (currency) => {
     if (!currency) return "";
 

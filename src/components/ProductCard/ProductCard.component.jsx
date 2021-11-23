@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
+import getPrice from '../../util/getPrice';
+import store from '../../redux/store';
 import actions from '../../redux/actions';
 import CartIcon from '../../media/svg/cart.svg';
 import './ProductCard.style.scss';
@@ -19,9 +20,23 @@ class ProductCard extends Component {
 
     render() {
         const product = this.props.product;
+        const addToCart = () => {
+            store.dispatch(
+                actions.cartAdd(product,
+                    product.attributes.map(attribute => {
+                        return {
+                            ...attribute,
+                            selected: attribute.items[0]
+                        }
+                    })
+                )
+            )
+        }
 
         return (
-            <Link to={`/product/${product.id}`} className="product-card-wrapper-link">
+            <Link
+                to={`/product/${product.id}`}
+                className="product-card-wrapper-link">
                 <div
                     className={`product-card 
                     ${product.inStock
@@ -30,16 +45,22 @@ class ProductCard extends Component {
                         }`}>
                     <div
                         className="product-card-image"
-                        style={{ backgroundImage: `url(${product.gallery[0]})` }}>
+                        style={{ backgroundImage: `url(${product.gallery[0]})` }}
+                    >
                         <div className="hover-cart-thing">
-                            <img src={CartIcon} alt="Check out" />
+                            <img src={CartIcon} alt="Add to cart"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    addToCart();
+                                }}
+                            />
                         </div>
                     </div>
                     <h5 className="product-card-title">
                         {product.name}
                     </h5>
                     <p className="product-card-price">
-                        {getPriceInSelectedCurrency(product)}
+                        {getPrice(product.prices)}
                     </p>
                 </div >
             </Link >
@@ -53,11 +74,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-const mapDispatchToProps = () => {
-    return {
-        selectProduct: actions.selectProduct,
-        selectCategory: actions.selectCategory,
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps())(ProductCard);
+export default connect(mapStateToProps, null)(ProductCard);

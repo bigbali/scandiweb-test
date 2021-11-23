@@ -9,8 +9,7 @@
 
     .product-area {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: auto;
+        grid-template-columns: repeat(auto-fill, minmax(386px, 1fr));
         grid-gap: 40px;
         max-width: 100%;
     }

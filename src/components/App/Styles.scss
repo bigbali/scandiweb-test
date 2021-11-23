@@ -9,7 +9,6 @@
     --color-dark-primary: #{#1D1F22};
     --color-dark-secondary: #{#3f4855};
     --color-theme: #{#5ECE7B};
-    //position: relative;
 }
 
 * {
@@ -18,11 +17,22 @@
     color: var(--color-dark-primary)
 }
 
+html {
+    height: 100%;
+}
+
 body {
     margin: 0;
-    min-height: 100vh;
+    min-height: 100vh; // So overlays take up full page
     max-width: 100%;
     background-color: var(--color-light-primary);
+
+    // #root (direct selection causes warning)
+    >div {
+        position: relative;
+        height: 100%;
+        min-height: 100vh;
+    }
 }
 
 main {
@@ -32,15 +42,6 @@ main {
 a {
     text-decoration: none;
 }
-
-// button {
-//     background-color: var(--color-light-primary);
-//     border: 1px solid var(--color-dark-primary);
-//     font-weight: 600;
-//     font-size: 1rem;
-//     padding: 1rem;
-//     cursor: pointer;
-// }
 
 .bold {
     font-weight: 600;
@@ -53,35 +54,6 @@ a {
 
 .regular {
     font-weight: 400;
-}
-
-.attribute-selector {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-
-    /*
-        We use 'inline-flex' because we want buttons to align next to each other.
-        We use 'flex' in general because we want to align text to center.
-    */
-
-    border: 1px solid var(--color-dark-primary);
-    padding: 0.25rem;
-    background-color: var(--color-light-primary);
-    width: 1.5rem;
-    height: 1.5rem;
-
-    &.horizontal {
-        margin-right: 0.5rem;
-    }
-}
-
-.fill-entirely {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
 }
 
 .font-size-14 {

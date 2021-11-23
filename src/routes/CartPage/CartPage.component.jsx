@@ -1,47 +1,31 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import CartItem from '../../components/CartItem';
-import actions from '../../redux/actions';
-import getProductById from '../../util/getProductById';
+import CartContent from '../../components/CartContent';
 import './CartPage.style.scss';
 
 class CartPage extends PureComponent {
-    constructor(props) {
-        super(props)
-
-        this.mapProductsToHtml = this.mapProductsToHtml.bind(this)
-    }
-
-    mapProductsToHtml() {
-        const cartItems = Object.entries(this.props.cart.products);
-        const mappedCartItems = cartItems.map(item => {
-            const productId = item[0];
-            const productVariations = item[1].variations;
-            const product = getProductById(productId);
-
-            return (
-                <CartItem product={product} variations={productVariations} key={productId} />
-            )
-        })
-
-        if (mappedCartItems.length > 0) {
-            return mappedCartItems
-        }
-        else {
-            return (
-                <h2 className="cart-page-empty">
-                    Hey, your cart is empty.
-                    There's plenty of stuff to fill it up with, just look around.
-                </h2>
-            )
-        }
-    }
-
     render() {
         return (
             <main className="cart-page">
-                <h1 className="cart-page-title">CART</h1>
-                {this.mapProductsToHtml()}
+                <h1 className="cart-page-title">
+                    CART
+                </h1>
+                {Object.keys(this.props.products) < 1
+                    ? (
+                        <div className="empty">
+                            <h1>
+                                Your cart is empty.
+                            </h1>
+                        </div>
+                    )
+                    : (
+                        <CartContent
+                            products={this.props.products}
+                            carousel
+                            className="in-cart-page"
+                        />
+                    )
+                }
             </main>
         )
     }
@@ -49,14 +33,10 @@ class CartPage extends PureComponent {
 
 const mapStateToProps = (state) => {
     return {
-        cart: state.cart
+        products: state.cart.products,
+        counter: state.cart.counter,
+        total: state.cart.total
     }
 }
 
-const mapDispatchToProps = () => {
-    return {
-        incrementItemCount: actions.cartIncrement,
-        decrementItemCount: actions.cartDecrement
-    }
-}
-export default connect(mapStateToProps, mapDispatchToProps())(CartPage);
+export default connect(mapStateToProps, null)(CartPage);

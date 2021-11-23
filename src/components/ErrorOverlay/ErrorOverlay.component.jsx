@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as status from '../../globals/statuscodes';
+import * as status from '../../redux/statuscodes';
 import './ErrorOverlay.style.scss';
 
 class ErrorOverlay extends Component {
@@ -39,7 +39,7 @@ class ErrorOverlay extends Component {
                 description = "Please, try reloading the page!";
                 break
             default:
-                // In theory, this should never get triggered,
+                // In theory, this should never be shown,
                 // therefore it can only be my fault if it does
                 message = "Everything is fine.";
                 description = "This is not an error. If you see this, it's the developer's fault!";

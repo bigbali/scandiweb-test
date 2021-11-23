@@ -1,17 +1,17 @@
 import React, { PureComponent } from 'react'
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { connect, batch } from 'react-redux';
-import { fetchCategories, fetchCurrencies } from './queries';
-import actions from './redux/actions';
-import CategoryPage from './routes/CategoryPage';
-import ProductPage from './routes/ProductPage';
-import CartPage from './routes/CartPage';
-import CheckoutPage from './routes/CheckoutPage';
-import MissingPage from './routes/MissingPage';
-import LoadingSpinner from './components/LoadingSpinner/';
-import ErrorOverlay from './components/ErrorOverlay';
-import Header from './components/Header';
-import './styles/main.scss';
+import { fetchCategories, fetchCurrencies } from '../../queries';
+import actions from '../../redux/actions';
+import CategoryPage from '../../routes/CategoryPage';
+import ProductPage from '../../routes/ProductPage';
+import CartPage from '../../routes/CartPage';
+import CheckoutPage from '../../routes/CheckoutPage';
+import MissingPage from '../../routes/MissingPage';
+import LoadingSpinner from '../LoadingSpinner';
+import ErrorOverlay from '../ErrorOverlay';
+import Header from '../Header';
+import './Styles.scss';
 
 class App extends PureComponent {
     initialize = async () => {

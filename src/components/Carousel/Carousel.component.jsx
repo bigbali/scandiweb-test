@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import devlog from '../../util/devlog';
+import FallbackImage from '../../media/jpg/no-image.jpg';
 import './Carousel.style.scss';
 
 export default class Carousel extends Component {
@@ -40,7 +40,7 @@ export default class Carousel extends Component {
         this.setState({
             currentIndex: newIndex
         }, () => {
-            devlog(`Selected gallery item with ID [${this.state.currentIndex}]`);
+            // Pass
         })
     }
 
@@ -71,7 +71,10 @@ export default class Carousel extends Component {
                 <img
                     src={gallery[this.state.currentIndex]}
                     alt={altTitle}
-                    className="carousel-image" />
+                    className="carousel-image"
+                    onError={(e) => {
+                        e.target.src = FallbackImage;
+                    }} />
             </div>
         )
     }

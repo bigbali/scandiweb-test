@@ -21,9 +21,6 @@ const getBrightness = (hexColor) => {
     // Calculate brightness (this isn't a proper way, but good enough for our use case)
     const brightness = (rBase10 + gBase10 + bBase10) / 3;
 
-    // * This is for you, kind souls reviewing my code, in case your curiosity expects things logged in console for a better view
-    // (because I know how much I like to print this stuff out in the console)
-    
     // devlog(`${rBase10}, ${gBase10}, ${bBase10}`)
     // devlog(`${brightness}`)
     return brightness;

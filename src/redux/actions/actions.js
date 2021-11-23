@@ -1,7 +1,5 @@
 import * as actions from './types';
 
-/*************** Loading ***************/
-
 export const toggleisLoading = () => {
     return {
         type: actions.LOADING_TOGGLE,
@@ -21,31 +19,12 @@ export const setIsLoading = (isLoading) => {
     }
 }
 
-/*************** Status ***************/
 
 export const setStatus = (statusActionType) => {
     return {
         type: statusActionType,
     }
 }
-
-/*************** Products ***************/
-
-export const setProducts = (products) => {
-    return {
-        type: actions.PRODUCTS_SET,
-        payload: products
-    }
-}
-
-export const selectProduct = (product) => {
-    return {
-        type: actions.PRODUCTS_SELECT,
-        payload: product.id
-    }
-}
-
-/*************** Categories ***************/
 
 export const setCategories = (categories) => {
     return {
@@ -61,8 +40,6 @@ export const selectCategory = (category) => {
     }
 }
 
-/*************** Currencies ***************/
-
 export const setCurrencies = (currencies) => {
     return {
         type: actions.CURRENCIES_SET,
@@ -77,8 +54,6 @@ export const selectCurrency = (currency) => {
     }
 }
 
-/*************** Cart ***************/
-
 export const cartAdd = (product, attributes) => {
     return {
         type: actions.CART_ADD,
@@ -89,33 +64,12 @@ export const cartAdd = (product, attributes) => {
     }
 }
 
-// Apparently, this won't be needed
-export const cartRemove = (productId, productVariation) => {
+export const cartRemove = (product, attributes) => {
     return {
         type: actions.CART_REMOVE,
         payload: {
-            productId,
-            productVariation
-        }
-    }
-}
-
-export const cartIncrement = (productId, productVariation) => {
-    return {
-        type: actions.CART_INCREMENT,
-        payload: {
-            productId,
-            productVariation
-        }
-    }
-}
-
-export const cartDecrement = (productId, productVariation) => {
-    return {
-        type: actions.CART_DECREMENT,
-        payload: {
-            productId,
-            productVariation
+            product,
+            attributes
         }
     }
 }

@@ -30,7 +30,7 @@ class ProductPage extends PureComponent {
         /*  
             When product page has product data, set category to that of product.
             This prevents having wrong category highlighted
-            when user navigates products through url, for example. 
+            when user navigates products through url, for example.
         */
         if (this.state.product) {
             this.props.selectCategory(this.state.product.category);

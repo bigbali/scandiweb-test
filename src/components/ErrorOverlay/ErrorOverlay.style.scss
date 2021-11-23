@@ -1,10 +1,9 @@
 .error-overlay {
-    position: absolute;
+    position: fixed;
     z-index: 99;
     inset: 0;
     display: grid;
     place-items: center;
-    height: 100vh;
     background-color: var(--color-light-primary);
     opacity: 0;
     pointer-events: none;

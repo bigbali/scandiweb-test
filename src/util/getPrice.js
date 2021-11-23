@@ -1,6 +1,11 @@
 import store from '../redux/store';
 import getSymbol from './getSymbol';
 
+/**
+ * Get selected price from an array of prices.
+ * @param {string[]} prices array of prices
+ * @returns {string} price in selected currency, with symbol
+ */
 const getPrice = (prices) => {
     const currency = store.getState().currencies.selected;
     const symbol = getSymbol(currency);

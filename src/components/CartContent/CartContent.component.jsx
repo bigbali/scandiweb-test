@@ -1,7 +1,14 @@
-import React, { Component, PureComponent } from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import actions from '../../redux/actions';
+import store from '../../redux/store';
 import getPrice from '../../util/getPrice';
 import Attributes from '../Attributes';
 import Button from '../Button';
+import PlusSymbol from '../../media/svg/plus-symbol.svg';
+import MinusSymbol from '../../media/svg/minus-symbol.svg';
+import Carousel from '../Carousel';
+import FallbackImage from '../../media/jpg/no-image.jpg';
 import './CartContent.style.scss';
 
 class CartItem extends Component {
@@ -10,46 +17,69 @@ class CartItem extends Component {
         const variation = this.props.variation;
 
         return (
-            <div className="cart-item">
+            <div className={`cart-item ${this.props.className || ""}`}>
                 <div className="left">
-                    <p className="brand">
-                        {product.brand}
-                    </p>
-                    <p className="name">
-                        {product.name}
-                    </p>
-                    <p className="price">
-                        {getPrice(product.prices)}
-                    </p>
-                    <Attributes
-                        product={product}
-                        attributes={variation.attributes}
-                    />
+                    <div className="product-data">
+                        <p className="brand">
+                            {product.brand}
+                        </p>
+                        <p className="name">
+                            {product.name}
+                        </p>
+                        <p className="price">
+                            {getPrice(product.prices)}
+                        </p>
+                        <Attributes
+                            product={product}
+                            attributes={variation.attributes}
+                        />
+                    </div>
                     <div className="quantity-actions">
-                        <Button>
-                            +
+                        <Button onClick={() => {
+                            store.dispatch(
+                                actions.cartAdd(product, variation.attributes)
+                            )
+                        }}>
+                            <img src={PlusSymbol} alt="+" />
                         </Button>
                         <span>
                             {variation.quantity}
                         </span>
-                        <Button>
-                            -
+                        <Button onClick={() => {
+                            store.dispatch(
+                                actions.cartRemove(product, variation.attributes)
+                            )
+                        }}>
+                            <img src={MinusSymbol} alt="-" />
                         </Button>
                     </div>
                 </div>
                 <div className="right">
-                    <img
-                        src={product.gallery[0]}
-                        alt={product.name}
-                    />
+                    {this.props.carousel ? (
+                        <Carousel
+                            gallery={product.gallery}
+                            altTitle={product.name} />
+                    ) : (
+                        <img
+                            src={product.gallery[0]}
+                            alt={product.name}
+                            onError={(e) => {
+                                e.target.src = FallbackImage;
+                            }}
+                        />
+                    )}
                 </div>
             </div>
         )
     }
 }
 
-export default class CartContent extends Component {
+class CartContent extends Component {
     render() {
+        // We must wait for currencies to be loaded,
+        // else we couldn't get prices
+        if (!this.props.currencies) return null
+
         const products = Object.values(this.props.products);
 
         return (
@@ -63,6 +93,7 @@ export default class CartContent extends Component {
                                     product={product}
                                     variation={variation}
                                     className={this.props.className}
+                                    carousel={this.props.carousel}
                                 />
                             )
                         })
@@ -72,3 +103,11 @@ export default class CartContent extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        currencies: state.currencies
+    }
+}
+
+export default connect(mapStateToProps, null)(CartContent)

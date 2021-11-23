@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { getSymbol, pairWithSymbol } from './../../util/dataProcessor';
 import actions from '../../redux/actions';
-import devlog from '../../util/devlog';
+import getSymbol from '../../util/getSymbol';
 import DropdownIcon from '../../media/svg/dropdown.svg';
 import './CurrencySelector.style.scss';
 
@@ -18,7 +17,6 @@ class CurrencySelector extends PureComponent {
         this.handleClickOutside = this.handleClickOutside.bind(this);
         this.toggleExpanded = this.toggleExpanded.bind(this);
         this.setExpanded = this.setExpanded.bind(this);
-        this.setSelectedCurrency = this.setSelectedCurrency.bind(this);
         this.mapCurrenciesToHtml = this.mapCurrenciesToHtml.bind(this);
     }
 
@@ -39,18 +37,12 @@ class CurrencySelector extends PureComponent {
     }
 
     handleClickOutside(event) {
-        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+        if (this.wrapperRef
+            && !this.wrapperRef.contains(event.target)) {
             this.setExpanded(false);
         }
     }
 
-    // When clicked on, set selected currency to whichever currency we clicked on
-    setSelectedCurrency(currency) {
-        this.props.selectCurrency(currency);
-        devlog(`Selected currency: ${currency}.`);
-    }
-
-    // Generate HTML list containing currencies paired with their respective symbols
     mapCurrenciesToHtml() {
         const list = this.props.currencies.all.map((currency, index) => {
             return (
@@ -60,8 +52,8 @@ class CurrencySelector extends PureComponent {
                             ? "selected"
                             : ""}
                         `}
-                    onClick={() => this.setSelectedCurrency(currency)}>
-                    {pairWithSymbol(currency)}
+                    onClick={() => this.props.selectCurrency(currency)}>
+                    {getSymbol(currency) + " " + currency}
                 </li>
             )
         })

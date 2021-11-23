@@ -32,15 +32,15 @@
     }
 
     .thumbnail {
-        // 610 / 1440 * 100, where 610 is the width of the image and 1440 is the width of the page.
-        // In theory, this should be whatever percentage the image takes up from the page width.
-        width: 42.36vw;
-        max-height: 75vh;
+        width: 42.36vw; // 610 / 1440 / 100
+        height: fit-content;
         position: relative;
         display: grid;
         place-items: center;
 
         img {
+            aspect-ratio: 610/511;
+            object-fit: contain;
             width: 100%;
         }
 
@@ -52,10 +52,9 @@
             &::before {
                 content: "OUT OF STOCK";
                 position: absolute;
-                z-index: 97;
+                z-index: 96;
                 left: 0;
                 right: 0;
-                //top: 0;
                 display: grid;
                 place-items: center;
                 padding: 2rem;

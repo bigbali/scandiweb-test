@@ -1,65 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { getPriceInSelectedCurrency } from '../../util/dataProcessor';
-import Button from '../Button/Button.component';
+import DOMPurify from 'dompurify';
 import actions from '../../redux/actions';
+import getPrice from '../../util/getPrice';
 import Attributes from '../Attributes';
 import './ProductActions.style.scss';
-import getPrice from '../../util/getPrice';
-
-// class Attributes extends PureComponent {
-//     render() {
-//         return (
-//             <div className="attributes">
-//                 {   // Return a row for each attribute type,
-//                     // each containing an array of buttons
-//                     this.props.product.attributes.map((attribute, index) => {
-//                         const selected = this.props.attributes[index].selected;
-
-//                         const buttons = attribute.items.map(item => {
-//                             return (
-//                                 <Button
-//                                     key={item.id}
-//                                     attributeItem={item}
-//                                     aria-label={item.displayValue}
-//                                     style={
-//                                         attribute.type === "swatch"
-//                                             ? { backgroundColor: item.value }
-//                                             : null
-//                                     }
-//                                     className={`
-//                                         ${selected === item
-//                                             ? "selected"
-//                                             : ""}
-//                                         ${attribute.type}`}
-//                                     onClick={() => {
-//                                         this.props.selectItem(item, attribute);
-//                                     }}
-//                                 >
-//                                     {attribute.type === "text"
-//                                         && item.displayValue}
-//                                 </Button>
-//                             )
-//                         })
-
-//                         return (
-//                             <div
-//                                 key={attribute.name}
-//                                 className="attribute-row"
-//                             >
-//                                 <div className="name">
-//                                     {attribute.name}:
-//                                 </div>
-//                                 <div className="buttons">
-//                                     {buttons}
-//                                 </div>
-//                             </div>
-//                         )
-//                     })}
-//             </div>
-//         )
-//     }
-// }
 
 class ProductActions extends PureComponent {
     constructor(props) {
@@ -144,17 +89,16 @@ class ProductActions extends PureComponent {
                 <div
                     className="add-to-cart"
                     onClick={() => {
-                        const x = this.state.attributes.map(x => {
-                            return {
-                                ...x,
-                                selected: { ...x.selected }
-                            }
-                        })
-
                         if (product.inStock) {
                             this.props.addToCart(
                                 product,
-                                x)
+                                this.state.attributes.map(attribute => {
+                                    return {
+                                        ...attribute,
+                                        selected: attribute.selected
+                                    }
+                                })
+                            )
                         }
                     }}
                 >
@@ -166,7 +110,9 @@ class ProductActions extends PureComponent {
                 </div>
                 <div
                     className="product-description"
-                    dangerouslySetInnerHTML={{ __html: product.description }}>
+                    dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(product.description)
+                    }}>
                 </div>
             </div>
         )
@@ -185,4 +131,5 @@ const mapDispatchToProps = () => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps())(ProductActions);
+export default connect(mapStateToProps, mapDispatchToProps())
+    (ProductActions);

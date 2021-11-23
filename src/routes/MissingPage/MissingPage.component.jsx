@@ -38,4 +38,5 @@ const mapDispatchToProps = () => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MissingPage)
+export default connect(mapStateToProps, mapDispatchToProps)
+    (MissingPage)

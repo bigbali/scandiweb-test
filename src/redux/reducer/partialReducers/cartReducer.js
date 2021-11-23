@@ -3,10 +3,11 @@ import deepEqual from 'deep-equal';
 import * as actions from "../../actions/types";
 
 const cartReducer = (state = initialState.cart, action) => {
-    console.log("CARTA")
     switch (action.type) {
         case actions.CART_ADD:
             return add(state, action)
+        case actions.CART_REMOVE:
+            return remove(state, action)
         default:
             return state;
     }
@@ -19,11 +20,12 @@ const add = (state, action) => {
     const oldProduct = state.products[newProduct.id];
     state.counter++;
 
+    // Create/update total price array
     state.total = newProduct.prices.map((price, index) => {
         return {
             currency: price.currency,
             amount: price.amount +
-                (state.total[index]
+                (state.total[index] // Doesn't yet exist on first run
                     ? state.total[index].amount
                     : 0
                 )
@@ -32,7 +34,7 @@ const add = (state, action) => {
 
     // If product is already in cart => check if new variation matches
     // one that's already there, and if so, increment its counter
-    if (state.products[newProduct.id]) {
+    if (oldProduct) {
         let isInCart = false;
 
         oldProduct.variations.forEach((variation, index) => {
@@ -68,33 +70,57 @@ const add = (state, action) => {
         }
     }
 
-    return { ...state }
+    return {
+        ...state,
+        products: { ...state.products }
+        // Products cloned separately because
+        // under some circumstances changes go by unnoticed
+    }
 }
 
 const remove = (state, action) => {
+    const newProduct = action.payload.product;
+    const oldProduct = state.products[newProduct.id];
     state.counter--;
 
-    const id = action.payload.product.id;
-    const product = state.products[id];
+    // If product is with this variation of attributes
+    // is already in cart, decrement its counter.
+    // If there is only one item, remove it altogether.
+    if (oldProduct) {
+        // Update total price array
+        state.total = state.total.map((price, index) => {
+            return {
+                currency: price.currency,
+                amount: price.amount - newProduct.prices[index].amount
+            }
+        })
 
-    // If product is already in cart => check if new variation matches
-    // one that's already there, and if so, increment its counter
-    if (product) {
-        product.variations.forEach((variation, index) => {
+        oldProduct.variations.forEach((variation, index) => {
             if (deepEqual(variation.attributes,
                 action.payload.attributes
             )) { // If incoming attributes match already existing
-                let relevantVariation = state.products[id].variations[index];
+                let relevantVariation = oldProduct.variations[index];
 
                 if (relevantVariation.quantity <= 1) {
-                    delete state.products[id].variations[index];
+                    if (oldProduct.variations.length <= 1) {
+                        delete state.products[newProduct.id];
+                        // If we are deleting the only variation,
+                        // delete item entirely
+                    }
+                    else {
+                        // Remove variation at index
+                        oldProduct.variations.splice(index, 1);
+                    }
                 }
                 else {
                     relevantVariation.quantity--;
                 }
             }
         })
-    }
+    } // Else, there is nothing for us to do here.
 
-    return state
+    return {
+        ...state,
+        products: { ...state.products }
+    }
 }

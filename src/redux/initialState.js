@@ -1,4 +1,4 @@
-import { STATUS_OK } from "../globals/statuscodes";
+import { STATUS_OK } from "./statuscodes";
 
 const initialState = {
     isLoading: true,
